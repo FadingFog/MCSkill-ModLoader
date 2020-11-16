@@ -9,7 +9,10 @@
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+
+# Idea
 out/
+.idea/workspace.xml
 
 # Package Files #
 *.jar
