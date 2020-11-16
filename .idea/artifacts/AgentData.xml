@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="AgentData">
+    <output-path>$USER_HOME$/AppData/Roaming/McSkill/updates</output-path>
+    <root id="root">
+      <element id="directory" name="Custom mods" />
+      <element id="file-copy" path="$PROJECT_DIR$/MCSkillLaunch.bat" />
+    </root>
+  </artifact>
+</component>

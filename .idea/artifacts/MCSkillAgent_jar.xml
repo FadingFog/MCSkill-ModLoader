@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="MCSkillAgent:jar">
+    <output-path>$USER_HOME$/AppData/Roaming/McSkill/updates</output-path>
+    <root id="archive" name="MCSkillAgent.jar">
+      <element id="module-output" name="MCSkill-Custom-Mode-Loader" />
+      <element id="library" level="project" name="javassist" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
