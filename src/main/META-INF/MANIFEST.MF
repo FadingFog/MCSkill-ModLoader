@@ -1,2 +1,3 @@
 Manifest-Version: 1.0
 Premain-Class: main.mcagent.Agent
+Main-Class: main.mcagent.Agent
