@@ -45,11 +45,11 @@ public class Util {
         return true;
     }
 
-    public static String getServerDir(String serverName){
+    public static String getServerName(String serverDir){
         for (AUX profile : serverProfiles)
         {
-            if (profile.getTitle().equals(serverName))
-                return profile.getDir();
+            if (profile.getDir().equals(serverDir))
+                return profile.getTitle();
         }
         return null;
     }

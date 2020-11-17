@@ -1,5 +1,6 @@
 package main.mcagent;
 
+import com.eclipsesource.json.JsonArray;
 import o.*;
 
 import java.io.File;
@@ -57,8 +58,8 @@ public class CustomMethods {
                 String fileContent = Util.readFile(excludeFile);
                 JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
                 for (AUX profile : serverProfiles) {
-                    if (!jsonRoot.has(profile.getTitle())){
-                        jsonRoot.put(profile.getTitle(), Collections.emptyList());
+                    if (!jsonRoot.has(profile.getDir())){
+                        jsonRoot.put(profile.getDir(), Collections.emptyList());
                     }
                 }
                 Util.writeFile(excludeFile, jsonRoot.toString(4));
@@ -70,8 +71,21 @@ public class CustomMethods {
 
     }
 
-    public static boolean onUpdateFile(Path path){
-        System.out.println("[INFO] Update file: " + path);
+    public static boolean onUpdateFile(Path path) throws FileNotFoundException {
+        if (path.getParent().getFileName().toString().equals("mods")){
+            String clientName = path.getParent().getParent().getFileName().toString();
+            String modName = path.getFileName().toString();
+
+            String fileContent = Util.readFile(PropertiesFields.excludeModsPath.toFile());
+            JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
+            if (jsonRoot.has(clientName)){
+                JSONArray excludes = jsonRoot.getJSONArray(clientName);
+                for (Object object: excludes) {
+                    if (object.getClass().equals(String.class) && object.equals(modName))
+                        return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -99,8 +113,33 @@ public class CustomMethods {
         }
     }
 
-    public static void onClientLaunch() {
+    public static void onClientLaunch(aUX serverProfile) throws IOException {
 
+        String clientName = serverProfile.clientDir.getFileName().toString();
+        System.out.println("Launching: " + clientName);
+
+        File customMods = PropertiesFields.modsFolderPath.resolve(clientName).toFile();
+        Path clientMods = serverProfile.clientDir.resolve("mods");
+
+        for (File file : Objects.requireNonNull(customMods.listFiles())) {
+            Path modPath = clientMods.resolve(file.getName());
+            if (Files.exists(modPath))
+                Files.delete(modPath);
+            Files.copy(file.toPath(), modPath);
+        }
+
+        String fileContent = Util.readFile(PropertiesFields.excludeModsPath.toFile());
+        JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
+        if (jsonRoot.has(clientName)){
+            JSONArray excludes = jsonRoot.getJSONArray(clientName);
+            for (Object object: excludes) {
+                if (object.getClass().equals(String.class)) {
+                    Path excludePath = clientMods.resolve((String) object);
+                    if (Files.exists(excludePath))
+                        Files.delete(excludePath);
+                }
+            }
+        }
     }
 
     public static void onRequestError(final String string){
