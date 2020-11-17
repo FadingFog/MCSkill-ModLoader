@@ -1,9 +1,6 @@
 package main.mcagent;
 
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
+import javassist.*;
 
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -23,7 +20,8 @@ public class ClassTransformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         className = className.replace('/', '.');
         if (Pattern.matches("^o.[^.]+$", className)){
-            System.out.println("[D2] Class loaded: " + className);
+            if (PropertiesFields.debug)
+                System.out.println("[Debug] Class loaded: " + className);
             try {
                 CtClass currentClass = pool.get(className);
                 return currentClass.toBytecode();

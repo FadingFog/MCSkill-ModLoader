@@ -8,5 +8,6 @@
     <orderEntry type="jdk" jdkName="corretto-1.8" jdkType="JavaSDK" />
     <orderEntry type="library" exported="" name="org.javassist:javassist:3.27.0-GA" level="project" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Launcher" level="project" />
   </component>
 </module>
