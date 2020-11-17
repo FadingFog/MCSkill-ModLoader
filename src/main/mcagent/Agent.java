@@ -40,6 +40,8 @@ public class Agent {
 
         loadProperties();
         System.out.println("[D1] [+] Agent successfully loaded.");
+
+        instrumentation.addTransformer(new ClassTransformer());
     }
 
     public static void loadProperties(){
