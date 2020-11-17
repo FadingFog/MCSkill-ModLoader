@@ -11,7 +11,7 @@ public class Agent {
 
     public static void premain(String args, Instrumentation instrumentation) {
         loadProperties();
-        System.out.println("[+] Agent цвфывsuccessfully loaded.");
+        System.out.println("[+] Agent successfully loaded.");
         instrumentation.addTransformer(new ClassTransformer());
     }
 
