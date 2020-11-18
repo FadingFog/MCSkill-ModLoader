@@ -2,11 +2,12 @@ package launcher.core;
 
 import javassist.*;
 import javassist.bytecode.Descriptor;
-
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import java.util.regex.Pattern;
+
+import common.PropertiesFields;
 
 public class ClassTransformer implements ClassFileTransformer {
 
@@ -20,6 +21,19 @@ public class ClassTransformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer) {
         className = className.replace('/', '.');
         byte[] classBytes = new byte[0];
+        if (className.equals("java.lang.ProcessBuilder")){
+            // ProcessBuilder command(List<String> command)
+            try {
+                CtClass currentClass = pool.get(className);
+                CtConstructor constructor = currentClass.getDeclaredConstructor(new CtClass[] {pool.get("java.util.List")});
+                constructor.insertBefore("$1 = launcher.core.CustomMethods.onProcessBuilderConstruct($1);");
+                classBytes = currentClass.toBytecode();
+                System.out.println("[+] ProcessBuilder was modified.");
+
+            } catch (NotFoundException | CannotCompileException | IOException e) {
+                e.printStackTrace();
+            }
+        }
         if (Pattern.matches("^o.[^.]+$", className)){
             if (PropertiesFields.debug)
                 System.out.println("[Debug] Class loaded: " + className);

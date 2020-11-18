@@ -8,6 +8,8 @@
       </element>
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/javassist/javassist/3.27.0-GA/javassist-3.27.0-GA.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20201115/json-20201115.jar" path-in-jar="/" />
+      <element id="module-output" name="Common" />
+      <element id="artifact" artifact-name="ClientAgent" />
     </root>
   </artifact>
 </component>

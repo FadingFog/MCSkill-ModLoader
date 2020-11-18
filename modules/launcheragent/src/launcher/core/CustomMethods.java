@@ -1,11 +1,14 @@
 package launcher.core;
 
+import common.PropertiesFields;
 import o.*;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import org.json.*;
+
+import static common.Utils.copyResourceFile;
 
 // Callback methods class
 public class CustomMethods {
@@ -15,6 +18,7 @@ public class CustomMethods {
     public static void onStart() {
         Aux config = aux.getConfig();
 
+        ProcessBuilder processBuilder = new ProcessBuilder(new ArrayList<String>());
         // Getting server profiles objects
         CoM3 launcherRequest = new CoM3(config);
         COM3 response = (COM3)launcherRequest.request();
@@ -37,6 +41,19 @@ public class CustomMethods {
         System.out.println("[+] Server profiles was loaded.");
 
         Util.updateModsConfig();
+    }
+
+    public static List<String> onProcessBuilderConstruct(List<String> command) throws IOException {
+        System.out.println("[-] Process builder completing.");
+        Path clientPath = Paths.get(System.getenv("TEMP")).resolve("ClientAgent.jar");
+        copyResourceFile("ClientAgent.jar", clientPath);
+        command.add(1, String.format("-javaagent:\"%s\"", clientPath.toAbsolutePath().toString()));
+        command.add(0, "cmd");
+        command.add(0, "/c");
+        command.add(0, "start");
+        command.add(0, "cmd");
+        command.add(0, "/k");
+        return command;
     }
 
     public static boolean onUpdateFile(Path path, Prn prn, InputStream inputStream) throws IOException {
