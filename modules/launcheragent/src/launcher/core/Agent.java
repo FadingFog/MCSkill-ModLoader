@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class Agent {
 
-    static String propertiesFilename = "mcAgent.cfg";
+    static String propertiesFilename = "customLauncher.ini";
 
     public static void premain(String args, Instrumentation instrumentation) {
         loadProperties();
@@ -27,6 +27,7 @@ public class Agent {
             System.out.println("[-] File with config wasn't found.");
             readException.printStackTrace();
             try {
+                props.setProperty("console", Boolean.toString(false));
                 props.setProperty("debug", Boolean.toString(PropertiesFields.debug));
                 props.setProperty("excludeModsFile", PropertiesFields.excludeModsPath.toString());
                 props.setProperty("modsFolder", PropertiesFields.modsFolderPath.toString());

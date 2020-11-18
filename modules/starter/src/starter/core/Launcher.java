@@ -2,9 +2,11 @@ package starter.core;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 public class Launcher {
 
@@ -27,12 +29,22 @@ public class Launcher {
             Files.delete(launcherAgent);
         copyResourceFile(LauncherAgentName, launcherDir.resolve(launcherAgent));
 
-        ProcessBuilder builder = new ProcessBuilder(javaExec.toString(), "-javaagent:"+LauncherAgentName,
-                                                    "-jar", "Launcher.jar");
-        builder.directory(launcherDir.toFile());
-        builder.start();
+        boolean isConsole = false;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(launcherDir.resolve("customLauncher.ini").toFile()));
+            isConsole = Boolean.parseBoolean(properties.getProperty("console"));
+            System.out.println("[+] Console config was read successfully.");
+        } catch (IOException readException) {
+            System.out.println("[-] Failed to read config.");
+        }
 
-        System.out.println("[+] Process was started.");
+        Runtime runtime = Runtime.getRuntime();
+        runtime.exec(String.format("%s %s -javaagent:%s -jar Launcher.jar",
+                                    isConsole ? "cmd /c start cmd /k" : "", javaExec.toString(), LauncherAgentName),
+                null, launcherDir.toFile());
+
+        System.out.println("[+] Launcher successfully started.");
     }
 
     public static Path findMCSkillDir() {
