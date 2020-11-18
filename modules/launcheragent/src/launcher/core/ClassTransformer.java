@@ -69,7 +69,7 @@ public class ClassTransformer implements ClassFileTransformer {
 
                         CtMethod method = currentClass.getMethod("aux",
                                 Descriptor.ofMethod(CtPrimitiveType.voidType, paramTypes));
-                        method.insertBefore("if (!launcher.core.CustomMethods.onUpdateFile($1)) {return;}");
+                        method.insertBefore("if (!launcher.core.CustomMethods.onUpdateFile($1, $2, $3)) {return;}");
 
                         // Delete callback
                         // aux(final Path path, final NUl nUl, final boolean b)

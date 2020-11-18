@@ -2,9 +2,7 @@ package launcher.core;
 
 import o.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import org.json.*;
@@ -67,7 +65,7 @@ public class CustomMethods {
 
     }
 
-    public static boolean onUpdateFile(Path path) throws FileNotFoundException {
+    public static boolean onUpdateFile(Path path, Prn prn, InputStream inputStream) throws IOException {
         if (path.getParent().getFileName().toString().equals("mods")){
             String clientName = path.getParent().getParent().getFileName().toString();
             String modName = path.getFileName().toString();
@@ -77,8 +75,18 @@ public class CustomMethods {
             if (jsonRoot.has(clientName)){
                 JSONArray excludes = jsonRoot.getJSONArray(clientName);
                 for (Object object: excludes) {
-                    if (object.getClass().equals(String.class) && object.equals(modName))
+                    if (object.getClass().equals(String.class) && object.equals(modName)){
+                        byte[] buffer = new byte[2048];
+                        int n = 0;
+                        while (n < prn.size) {
+                            final int read = inputStream.read(buffer, 0, (int)Math.min(prn.size - n, buffer.length));
+                            if (read < 0) {
+                                throw new EOFException(String.format("%d bytes remaining", prn.size - n));
+                            }
+                            n += read;
+                        }
                         return false;
+                    }
                 }
             }
         }
