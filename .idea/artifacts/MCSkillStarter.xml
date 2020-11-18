@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="MCSkillStarter">
+    <output-path>$PROJECT_DIR$/out/artifacts/MCSkillStarter</output-path>
+    <root id="archive" name="MCSkillStarter.jar">
+      <element id="module-output" name="Starter" />
+      <element id="artifact" artifact-name="LauncherAgent:jar" />
+    </root>
+  </artifact>
+</component>
