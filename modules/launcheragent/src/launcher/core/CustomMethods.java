@@ -24,45 +24,19 @@ public class CustomMethods {
             cOm7 profileInfo = (cOm7)profile;
             serverProfiles.add((AUX)profileInfo.object);
         }
+
+        if (!Files.exists(PropertiesFields.modsFolderPath)) {
+            try {
+                Files.createDirectories(PropertiesFields.modsFolderPath);
+                System.out.println("[+] Custom mods directory was created.");
+            } catch (IOException e) {
+                System.out.println("[-] Couldn't custom mods directory.");
+            }
+        }
+
         System.out.println("[+] Server profiles was loaded.");
 
-        // Check mods folder
-        if (Util.checkOrCreateDirectories(PropertiesFields.modsFolderPath)){
-            for (AUX profile : serverProfiles){
-                Path serverDir = Paths.get(profile.getDir().replace('*', '_'));
-                Path customModsDir = Paths.get(PropertiesFields.modsFolderPath + "/" + serverDir);
-                if (Files.isDirectory(serverDir) && !Files.isDirectory(customModsDir)){
-                    try {
-                        Files.createDirectory(customModsDir);
-                    } catch (IOException e) {
-                        System.out.println("[-] Filed to create custom mods folder \"" + customModsDir +"\"");
-                    }
-                }
-            }
-            System.out.println("[+] Custom mods folders were updated successfully.");
-        }
-        else {
-            System.out.println("[-] Failed to update custom mods directory.");
-        }
-
-        // Check exclude mods name file
-        if (Util.checkFileOrCreate(PropertiesFields.excludeModsPath)){
-            try {
-                File excludeFile = PropertiesFields.excludeModsPath.toFile();
-                String fileContent = Util.readFile(excludeFile);
-                JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
-                for (AUX profile : serverProfiles) {
-                    if (!jsonRoot.has(profile.getDir())){
-                        jsonRoot.put(profile.getDir(), Collections.emptyList());
-                    }
-                }
-                Util.writeFile(excludeFile, jsonRoot.toString(4));
-                System.out.println("[+] Exclude file was updated successfully.");
-            } catch (IOException e) {
-                System.out.println("[-] Failed to read exclude mods file.");
-            }
-        }
-
+        Util.updateModsConfig();
     }
 
     public static boolean onUpdateFile(Path path, Prn prn, InputStream inputStream) throws IOException {
@@ -70,75 +44,63 @@ public class CustomMethods {
             String clientName = path.getParent().getParent().getFileName().toString();
             String modName = path.getFileName().toString();
 
-            String fileContent = Util.readFile(PropertiesFields.excludeModsPath.toFile());
+            String fileContent = Util.readFile(PropertiesFields.customModsConfig.toFile());
             JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
-            if (jsonRoot.has(clientName)){
-                JSONArray excludes = jsonRoot.getJSONArray(clientName);
-                for (Object object: excludes) {
-                    if (object.getClass().equals(String.class) && object.equals(modName)){
-                        byte[] buffer = new byte[2048];
-                        int n = 0;
-                        while (n < prn.size) {
-                            final int read = inputStream.read(buffer, 0, (int)Math.min(prn.size - n, buffer.length));
-                            if (read < 0) {
-                                throw new EOFException(String.format("%d bytes remaining", prn.size - n));
-                            }
-                            n += read;
-                        }
-                        return false;
+            if (!jsonRoot.has("excludeMods"))
+                return true;
+            jsonRoot = jsonRoot.getJSONObject("excludeMods");
+            if (jsonRoot.has(modName) && jsonRoot.getJSONArray(modName).toList().contains(clientName)){
+                byte[] buffer = new byte[2048];
+                int n = 0;
+                while (n < prn.size) {
+                    final int read = inputStream.read(buffer, 0, (int)Math.min(prn.size - n, buffer.length));
+                    if (read < 0) {
+                        throw new EOFException(String.format("%d bytes remaining", prn.size - n));
                     }
+                    n += read;
                 }
+                return false;
             }
         }
         return true;
     }
 
-    public static void onDeleteFiles(Path folder, NUl entries, boolean flag) throws IOException {
-        Map<?, ?> map = Collections.unmodifiableMap(entries.map());
-        for (Map.Entry<?, ?> entry : map.entrySet()){
-            Path fullPath = folder.resolve(entry.getKey().toString());
-            NUL value = (NUL)entry.getValue();
-            switch (value.getType().ordinal()) {
-                case 1:
-                    if (folder.getFileName().toString().equals("mods")) {
-                        Path customModsFolder = PropertiesFields.modsFolderPath.resolve(folder.getParent().getFileName());
-                        if (Files.exists(customModsFolder.resolve(fullPath.getFileName())))
-                            break;
-                    }
-                    Files.delete(fullPath);
-                    break;
-                case 2:
-                    onDeleteFiles(fullPath, (NUl)value, value.flag || flag);
-                    break;
-            }
-        }
-        if (flag){
-            Files.delete(folder);
-        }
-    }
-
     public static void onClientLaunch(aUX serverProfile) throws IOException {
 
         String clientName = serverProfile.clientDir.getFileName().toString();
-        System.out.println("Launching: " + clientName);
+        System.out.println("[/] Launching: " + clientName);
 
-        File customMods = PropertiesFields.modsFolderPath.resolve(clientName).toFile();
+        File customModsDir = PropertiesFields.modsFolderPath.toFile();
         Path clientMods = serverProfile.clientDir.resolve("mods");
 
-        for (File file : Objects.requireNonNull(customMods.listFiles())) {
-            Path modPath = clientMods.resolve(file.getName());
-            if (Files.exists(modPath))
-                Files.delete(modPath);
-            Files.copy(file.toPath(), modPath);
+        String fileContent = Util.readFile(PropertiesFields.customModsConfig.toFile());
+        JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
+
+        if (jsonRoot.has("customMods")){
+            JSONObject customMods = jsonRoot.getJSONObject("customMods");
+            for (File file : Objects.requireNonNull(customModsDir.listFiles())) {
+                if (!customMods.has(file.getName()))
+                    continue;
+
+                JSONObject customMod = customMods.getJSONObject(file.getName());
+                if (!customMod.has("servers") || !customMod.getJSONArray("servers").toList().contains(clientName))
+                    continue;
+
+                Path modPath = clientMods.resolve(file.getName());
+                if (Files.exists(modPath))
+                    Files.delete(modPath);
+                Files.copy(file.toPath(), modPath);
+            }
         }
 
-        String fileContent = Util.readFile(PropertiesFields.excludeModsPath.toFile());
-        JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
-        if (jsonRoot.has(clientName)){
-            JSONArray excludes = jsonRoot.getJSONArray(clientName);
-            for (Object object: excludes) {
-                if (object.getClass().equals(String.class)) {
-                    Path excludePath = clientMods.resolve((String) object);
+        if (jsonRoot.has("excludeMods")){
+            JSONObject excludeMods = jsonRoot.getJSONObject("excludeMods");
+            for (String key : excludeMods.keySet()){
+                Object object = excludeMods.get(key);
+                if (!object.getClass().equals(JSONArray.class))
+                    continue;
+                if (((JSONArray)object).toList().contains(clientName)){
+                    Path excludePath = clientMods.resolve(key);
                     if (Files.exists(excludePath))
                         Files.delete(excludePath);
                 }

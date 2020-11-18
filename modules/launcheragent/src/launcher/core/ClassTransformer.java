@@ -71,18 +71,6 @@ public class ClassTransformer implements ClassFileTransformer {
                                 Descriptor.ofMethod(CtPrimitiveType.voidType, paramTypes));
                         method.insertBefore("if (!launcher.core.CustomMethods.onUpdateFile($1, $2, $3)) {return;}");
 
-                        // Delete callback
-                        // aux(final Path path, final NUl nUl, final boolean b)
-                        paramTypes = new CtClass[]{
-                                pool.get("java.nio.file.Path"),
-                                pool.get("o.NUl"),
-                                CtPrimitiveType.booleanType,
-                        };
-
-                        method = currentClass.getMethod("aux",
-                                Descriptor.ofMethod(CtPrimitiveType.voidType, paramTypes));
-                        method.setBody("launcher.core.CustomMethods.onDeleteFiles($1, $2, $3);");
-
                         System.out.println("[+] Update | Com4.aux(): Callback was installed.");
 
                         classBytes = currentClass.toBytecode();
@@ -98,10 +86,6 @@ public class ClassTransformer implements ClassFileTransformer {
                     // Minecraft Client launch method
                     // launch
                     try {
-                        CtClass[] paramTypes = new CtClass[]{
-                                pool.get("o.AUX"),
-                                pool.get("o.aUX"),
-                        };
 
                         CtMethod method = currentClass.getDeclaredMethod("launch");
 

@@ -20,7 +20,7 @@ public class Agent {
         try {
             props.load(new FileInputStream(propertiesFilename));
             PropertiesFields.debug = Boolean.parseBoolean(props.getProperty("debug"));
-            PropertiesFields.excludeModsPath = FileSystems.getDefault().getPath(props.getProperty("excludeModsFile"));
+            PropertiesFields.customModsConfig = FileSystems.getDefault().getPath(props.getProperty("customModsConfig"));
             PropertiesFields.modsFolderPath = FileSystems.getDefault().getPath(props.getProperty("modsFolder"));
             System.out.println("[+] Config was read successfully.");
         } catch (IOException readException) {
@@ -29,7 +29,7 @@ public class Agent {
             try {
                 props.setProperty("console", Boolean.toString(false));
                 props.setProperty("debug", Boolean.toString(PropertiesFields.debug));
-                props.setProperty("excludeModsFile", PropertiesFields.excludeModsPath.toString());
+                props.setProperty("customModsConfig", PropertiesFields.customModsConfig.toString());
                 props.setProperty("modsFolder", PropertiesFields.modsFolderPath.toString());
                 props.store(new FileOutputStream(propertiesFilename), null);
                 System.out.println("[+] New config file has created.");
