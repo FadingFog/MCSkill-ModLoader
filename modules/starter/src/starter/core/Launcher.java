@@ -40,8 +40,8 @@ public class Launcher {
         }
 
         Runtime runtime = Runtime.getRuntime();
-        runtime.exec(String.format("%s %s -javaagent:%s -jar Launcher.jar",
-                                    isConsole ? "cmd /c start cmd /k" : "", javaExec.toString(), LauncherAgentName),
+        runtime.exec(String.format("cmd /c %s \"%s -javaagent:%s -jar Launcher.jar & exit\"",
+                                    isConsole ? "start cmd /k" : "", javaExec.toString(), LauncherAgentName),
                 null, launcherDir.toFile());
 
         System.out.println("[+] Launcher successfully started.");
