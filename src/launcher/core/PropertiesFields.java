@@ -1,4 +1,4 @@
-package main.mcagent;
+package launcher.core;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;

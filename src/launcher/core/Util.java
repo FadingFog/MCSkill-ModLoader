@@ -1,14 +1,11 @@
-package main.mcagent;
+package launcher.core;
 
 import o.AUX;
 
 import java.io.*;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
-
-import static main.mcagent.CustomMethods.serverProfiles;
 
 public class Util {
     public static boolean checkOrCreateDirectories(Path path){
@@ -46,7 +43,7 @@ public class Util {
     }
 
     public static String getServerName(String serverDir){
-        for (AUX profile : serverProfiles)
+        for (AUX profile : CustomMethods.serverProfiles)
         {
             if (profile.getDir().equals(serverDir))
                 return profile.getTitle();

@@ -1,17 +1,13 @@
-package main.mcagent;
+package launcher.core;
 
-import com.eclipsesource.json.JsonArray;
 import o.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import org.json.*;
-
-import javax.swing.text.html.parser.Entity;
 
 // Callback methods class
 public class CustomMethods {

@@ -1,4 +1,4 @@
-package main.mcagent;
+package launcher.core;
 
 import java.io.*;
 import java.lang.instrument.Instrumentation;

@@ -1,12 +1,10 @@
-package main.mcagent;
+package launcher.core;
 
 import javassist.*;
 import javassist.bytecode.Descriptor;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.regex.Pattern;
 
@@ -44,7 +42,7 @@ public class ClassTransformer implements ClassFileTransformer {
                         CtMethod method = currentClass.getDeclaredMethod("start");
 
                         // Insert in begin method our callback method
-                        method.insertBefore("main.mcagent.CustomMethods.onStart();");
+                        method.insertBefore("launcher.core.CustomMethods.onStart();");
 
                         classBytes = currentClass.toBytecode();
                         System.out.println("[+] Launcher | aux.start(): Callback was installed.");
@@ -71,7 +69,7 @@ public class ClassTransformer implements ClassFileTransformer {
 
                         CtMethod method = currentClass.getMethod("aux",
                                 Descriptor.ofMethod(CtPrimitiveType.voidType, paramTypes));
-                        method.insertBefore("if (!main.mcagent.CustomMethods.onUpdateFile($1)) {return;}");
+                        method.insertBefore("if (!launcher.core.CustomMethods.onUpdateFile($1)) {return;}");
 
                         // Delete callback
                         // aux(final Path path, final NUl nUl, final boolean b)
@@ -83,7 +81,7 @@ public class ClassTransformer implements ClassFileTransformer {
 
                         method = currentClass.getMethod("aux",
                                 Descriptor.ofMethod(CtPrimitiveType.voidType, paramTypes));
-                        method.setBody("main.mcagent.CustomMethods.onDeleteFiles($1, $2, $3);");
+                        method.setBody("launcher.core.CustomMethods.onDeleteFiles($1, $2, $3);");
 
                         System.out.println("[+] Update | Com4.aux(): Callback was installed.");
 
@@ -107,7 +105,7 @@ public class ClassTransformer implements ClassFileTransformer {
 
                         CtMethod method = currentClass.getDeclaredMethod("launch");
 
-                        method.insertBefore("main.mcagent.CustomMethods.onClientLaunch($6);");
+                        method.insertBefore("launcher.core.CustomMethods.onClientLaunch($6);");
 
                         System.out.println("[+] ClientLaunch | AUx.launch(): Callback was installed.");
 
@@ -117,8 +115,6 @@ public class ClassTransformer implements ClassFileTransformer {
                         System.out.println("[-] ClientLaunch | AUx.launch(): Callback install failed.");
                         e.printStackTrace();
                     }
-
-
                     break;
             }
         }
