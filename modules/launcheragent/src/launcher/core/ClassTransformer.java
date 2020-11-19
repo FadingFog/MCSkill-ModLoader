@@ -27,7 +27,7 @@ public class ClassTransformer implements ClassFileTransformer {
             try {
                 currentClass = pool.get(className);
             } catch (NotFoundException e) {
-                if (PropertiesFields.debug)
+                if (PropertiesFields.clientDebug)
                     System.out.println("[Debug] Failed load class: " + className);
                 return classBytes;
             }

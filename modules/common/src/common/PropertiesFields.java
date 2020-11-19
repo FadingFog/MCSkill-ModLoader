@@ -11,8 +11,8 @@ import java.util.Properties;
 
 public class PropertiesFields {
     static final String propertiesFilename = "customLauncher.ini";
-    public static boolean debug = false;
-    public static boolean console = false;
+    public static boolean clientDebug = false;
+    public static boolean launcherDebug = false;
     public static Path modsFolderPath = FileSystems.getDefault().getPath("customMods");
     public static Path customModsConfig = FileSystems.getDefault().getPath("customMods.json");
 
@@ -22,8 +22,8 @@ public class PropertiesFields {
         File configFile = mcSkillDir.resolve(propertiesFilename).toFile();
         try {
             props.load(new FileInputStream(configFile));
-            PropertiesFields.debug = Boolean.parseBoolean(props.getProperty("debug"));
-            PropertiesFields.console = Boolean.parseBoolean(props.getProperty("console"));
+            PropertiesFields.clientDebug = Boolean.parseBoolean(props.getProperty("clientDebug"));
+            PropertiesFields.launcherDebug = Boolean.parseBoolean(props.getProperty("launcherDebug"));
             PropertiesFields.customModsConfig = FileSystems.getDefault().getPath(props.getProperty("customModsConfig"));
             PropertiesFields.modsFolderPath = FileSystems.getDefault().getPath(props.getProperty("modsFolder"));
             System.out.println("[+] Config was read successfully.");
@@ -31,8 +31,8 @@ public class PropertiesFields {
             System.out.println("[-] File with config wasn't found.");
             readException.printStackTrace();
             try {
-                props.setProperty("console", Boolean.toString(false));
-                props.setProperty("debug", Boolean.toString(PropertiesFields.debug));
+                props.setProperty("launcherDebug", Boolean.toString(PropertiesFields.launcherDebug));
+                props.setProperty("clientDebug", Boolean.toString(PropertiesFields.clientDebug));
                 props.setProperty("customModsConfig", PropertiesFields.customModsConfig.toString());
                 props.setProperty("modsFolder", PropertiesFields.modsFolderPath.toString());
                 props.store(new FileOutputStream(configFile), null);

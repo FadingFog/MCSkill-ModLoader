@@ -18,7 +18,7 @@ public class CustomMethods {
     public static void onStart() {
         Aux config = aux.getConfig();
 
-        Com1.setDebugEnabled(PropertiesFields.debug);
+        Com1.setDebugEnabled(PropertiesFields.clientDebug);
         // Getting server profiles objects
         CoM3 launcherRequest = new CoM3(config);
         COM3 response = (COM3)launcherRequest.request();
