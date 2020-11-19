@@ -72,8 +72,8 @@ public class Callbacks {
                         }).findFirst();
                         if (modContainerOpt.isPresent()){
                             Object replaceContainer = modContainerOpt.get();
-                            newModId = (String)modContainerClazz.getMethod("getModId").invoke(container);
-                            newVersion = (String)modContainerClazz.getMethod("getVersion").invoke(container);
+                            newModId = (String)modContainerClazz.getMethod("getModId").invoke(replaceContainer);
+                            newVersion = (String)modContainerClazz.getMethod("getVersion").invoke(replaceContainer);
                             System.out.printf("[CInfo] Replaced mod data %s:%s\n", newModId, newVersion);
                             restricted.add(replaceContainer);
                         }
