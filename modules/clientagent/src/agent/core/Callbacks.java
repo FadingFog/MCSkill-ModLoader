@@ -1,6 +1,5 @@
 package agent.core;
 
-import javassist.bytecode.ClassFile;
 import o.*;
 import org.json.JSONObject;
 

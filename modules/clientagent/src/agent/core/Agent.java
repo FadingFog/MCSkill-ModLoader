@@ -1,12 +1,10 @@
 package agent.core;
 
-import javassist.NotFoundException;
-
 import java.lang.instrument.Instrumentation;
 
 public class Agent {
 
-    public static void premain(String args, Instrumentation instrumentation) throws NotFoundException {
+    public static void premain(String args, Instrumentation instrumentation) {
         instrumentation.addTransformer(new ClassTransformer());
     }
 

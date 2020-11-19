@@ -5,8 +5,6 @@ import o.*;
 
 import java.io.*;
 import java.nio.file.*;
-import java.nio.file.attribute.FileAttribute;
-import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 import org.json.*;
 
@@ -124,7 +122,7 @@ public class CustomMethods {
         }
 
         // Copied from decompiled code
-        final Path tempFile = Files.createTempFile("ClientLauncherParams", ".bin", (FileAttribute<?>[])new FileAttribute[0]);
+        final Path tempFile = Files.createTempFile("ClientLauncherParams", ".bin");
         try (final COm5 cOm11 = new COm5(PRn.newOutput(tempFile))) {
             serverParams.write(cOm11);
             profile.write(cOm11);

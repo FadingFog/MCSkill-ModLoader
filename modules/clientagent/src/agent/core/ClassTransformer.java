@@ -1,22 +1,13 @@
 package agent.core;
 
 import javassist.*;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.StringMemberValue;
 
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.ProtectionDomain;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class ClassTransformer implements ClassFileTransformer {

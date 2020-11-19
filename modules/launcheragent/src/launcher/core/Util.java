@@ -9,8 +9,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class Util {
     public static Boolean checkFileOrCreate(Path path){
@@ -24,15 +22,6 @@ public class Util {
             }
         }
         return true;
-    }
-
-    public static String getServerName(String serverDir){
-        for (AUX profile : CustomMethods.serverProfiles)
-        {
-            if (profile.getDir().equals(serverDir))
-                return profile.getTitle();
-        }
-        return null;
     }
 
     public static String readFile(File file) throws FileNotFoundException {
