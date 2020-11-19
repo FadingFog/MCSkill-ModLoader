@@ -16,7 +16,6 @@ public class Agent {
     }
 
 
-
     public static void main(String[] args) {
         System.out.println("[-] Loading failed. You must load this file as agent. " +
                 "\nCheck readme: https://github.com/CallowBlack/MCSkill-Custom-Mods-Loader");

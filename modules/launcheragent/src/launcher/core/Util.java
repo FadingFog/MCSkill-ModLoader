@@ -2,12 +2,15 @@ package launcher.core;
 
 import common.PropertiesFields;
 import o.AUX;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class Util {
     public static Boolean checkFileOrCreate(Path path){
@@ -77,12 +80,19 @@ public class Util {
                 if (!jsonRoot.has("customMods")){
                     hasChanges = true;
                     JSONObject customMods = new JSONObject(
-                            "{ \"exampleMod.jar\": {" +
-                                    " \"comment\" : \"This is example of custom mod config." +
-                                    " 'servers' consist names of servers which will USE this modification." +
-                                    " This field isn't necessary.\"," +
-                                    "\"servers\" : [\"ServerName1\", \"ServerName2\"]" +
-                                    "} }");
+                            "{" +
+                                        "\"exampleMod.jar\": {" +
+                                            "\"servers\" : [\"ServerName1\", \"ServerName2\"], " +
+                                            "\"mod_info\": { " +
+                                                "\"id\": \"newIdValue\", " +
+                                                "\"version\": \"newVersionValue\" " +
+                                            "} " +
+                                        "}, " +
+                                        " \"exampleMod2.jar\": {" +
+                                            "\"servers\" : \"SingleName\", " +
+                                            "\"mod_info\": \"file_to_replace.jar\" " +
+                                        "}, " +
+                                    "}");
                     jsonRoot.put("customMods", customMods);
                 }
 
@@ -93,7 +103,7 @@ public class Util {
                     if (!customMods.has(fileName))
                     {
                         hasChanges = true;
-                        customMods.put(fileName, new JSONObject("{ \"servers\" : [] }"));
+                        customMods.put(fileName, new JSONObject("{ \"servers\": null , \"mod_info\": null }"));
                     }
                 }
                 jsonRoot.put("customMods", customMods);
@@ -101,8 +111,8 @@ public class Util {
                 if (!jsonRoot.has("excludeMods")) {
                     hasChanges = true;
                     JSONObject excludeMods = new JSONObject(
-                            "{ \"comment\": \"Here are excluded mods filenames and corresponding servers on which they are excluded.\"," +
-                                    "\"exampleMod.jar\": [\"ServerName1\", \"ServerName2\"] }");
+                            "{\"example.jar\": [\"ServerName1\", \"ServerName2\"], " +
+                                    "\"example2.jar\": \"SingleServerName\" }");
                     jsonRoot.put("excludeMods", excludeMods);
                 }
 
@@ -115,4 +125,33 @@ public class Util {
             }
         }
     }
+
+    public static boolean isContains(Object source, String value){
+        return (source.getClass().equals(String.class) && source.toString().equals(value)) ||
+                (source.getClass().equals(JSONArray.class) && ((JSONArray) source).toList().contains(value));
+    }
+//
+//    public static JSONObject getModInfo(Path mod)
+//    {
+//        try (ZipFile zipFile = new ZipFile(mod.toString())) {
+//            Optional<? extends ZipEntry> modinfo = zipFile.stream()
+//                    .filter(zipEntry -> zipEntry.getName().equals("mcmod.info"))
+//                    .findFirst();
+//
+//            if (modinfo.isPresent())
+//            {
+//                JSONObject result = new JSONObject();
+//                JSONObject modInfo = new JSONObject(zipFile.getInputStream(modinfo.get()));
+//            }
+//            System.out.println(String.format(
+//                    "Item: %s \nType: %s \nSize: %d\n",
+//                    entry.getName(),
+//                    entry.isDirectory() ? "directory" : "file",
+//                    entry.getSize()
+//            ));
+//        } catch (IOException e) {
+//            System.out.println("[-] Mod file to get info isn't found.");
+//        }
+//        return null;
+//    }
 }

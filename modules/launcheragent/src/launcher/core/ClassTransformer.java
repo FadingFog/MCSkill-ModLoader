@@ -21,23 +21,7 @@ public class ClassTransformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] classfileBuffer) {
         className = className.replace('/', '.');
         byte[] classBytes = new byte[0];
-        if (className.equals("java.lang.ProcessBuilder")){
-            // ProcessBuilder command(List<String> command)
-            try {
-                CtClass currentClass = pool.get(className);
-                CtConstructor constructor = currentClass.getDeclaredConstructor(new CtClass[] {pool.get("java.util.List")});
-                constructor.insertBefore("$1 = launcher.core.CustomMethods.onProcessBuilderConstruct($1);");
-                classBytes = currentClass.toBytecode();
-                System.out.println("[+] ProcessBuilder was modified.");
-
-            } catch (NotFoundException | CannotCompileException | IOException e) {
-                e.printStackTrace();
-            }
-        }
         if (Pattern.matches("^o.[^.]+$", className)){
-            if (PropertiesFields.debug)
-                System.out.println("[Debug] Class loaded: " + className);
-
             // Catching classes
             CtClass currentClass;
             try {
@@ -102,8 +86,7 @@ public class ClassTransformer implements ClassFileTransformer {
                     try {
 
                         CtMethod method = currentClass.getDeclaredMethod("launch");
-
-                        method.insertBefore("launcher.core.CustomMethods.onClientLaunch($6);");
+                        method.setBody("return launcher.core.CustomMethods.onClientLaunch($1, $2, $3, $4, $5, $6, $7);");
 
                         System.out.println("[+] ClientLaunch | AUx.launch(): Callback was installed.");
 
