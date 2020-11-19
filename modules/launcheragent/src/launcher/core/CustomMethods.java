@@ -53,7 +53,7 @@ public class CustomMethods {
             if (!jsonRoot.has("excludeMods"))
                 return true;
             jsonRoot = jsonRoot.getJSONObject("excludeMods");
-            if (jsonRoot.has(modName) && jsonRoot.getJSONArray(modName).toList().contains(clientName)){
+            if (jsonRoot.has(modName) && Util.isContains(jsonRoot.get(modName), clientName)){
                 byte[] buffer = new byte[2048];
                 int n = 0;
                 while (n < prn.size) {
