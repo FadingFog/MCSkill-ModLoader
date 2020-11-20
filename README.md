@@ -2,7 +2,7 @@ MCSkill ModLoader | RU
 ==============
 Позволяет использовать сторонние клиентские модификации на сервера MCSkill.
 
-Последняя версия релиза: [1.0](https://github.com/CallowBlack/MCSkill-ModLoader/releases/tag/1.0.107)
+Последняя версия релиза: [1.1](https://github.com/CallowBlack/MCSkill-ModLoader/releases/tag/1.1.107)
 
 Совместимо с сборкой лаунчера №107 от 19.04.20. ([Как узнать номер сборки?](#HowGetBuild))
 
