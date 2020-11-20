@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.ProtectionDomain;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ClassTransformer implements ClassFileTransformer {
@@ -45,42 +47,27 @@ public class ClassTransformer implements ClassFileTransformer {
         }
 
         switch (className) {
-            case "net.minecraftforge.fml.common.discovery.ModDiscoverer":
-            case "cpw.mods.fml.common.discovery.ModDiscoverer":
+            case "cpw.mods.fml.common.network.handshake.FMLHandshakeCodec":
+            case "net.minecraftforge.fml.common.network.handshake.FMLHandshakeCodec":
+                String prefix = "net.minecraftforge";
+                if (className.startsWith("cpw.mods"))
+                    prefix = "cpw.mods";
                 try {
-                    CtMethod method = currentClass.getDeclaredMethod("identifyMods");
-                    method.insertAfter("$_ = agent.core.Callbacks.onDiscoveringMods($_);");
+                    CtMethod method = currentClass.getDeclaredMethod("encodeInto");
+
+                    method.insertBefore(String.format(
+                            "if ($2.getClass().equals(%s.fml.common.network.handshake.FMLHandshakeMessage.ModList.class)) " +
+                            "{ agent.core.Callbacks.onSendModLog(%s.fml.common.Loader.instance().getActiveModList(), $3, \"%s\"); return; }",
+                            prefix, prefix, prefix));
 
                     classBytes = currentClass.toBytecode();
-
-                    System.out.println("[+] ModDiscoverer patched.");
-                } catch (NotFoundException | IOException | CannotCompileException e) {
+                    System.out.println("[+] FMLCodec was patched.");
+                } catch (NotFoundException | CannotCompileException | IOException e) {
+                    System.out.println("[-] FMLCodec patch process failed.");
                     e.printStackTrace();
                 }
                 break;
 
-            case "cpw.mods.fml.common.FMLModContainer":
-            case "net.minecraftforge.fml.common.FMLModContainer":
-                try {
-
-                    CtMethod setMethod = CtMethod.make(
-                            "public void setModId(java.lang.String modId) { this.descriptor.put(\"modid\", modId); }", currentClass);
-                    currentClass.addMethod(setMethod);
-
-                    setMethod = CtMethod.make(
-                            "public void setVersion(java.lang.String version) { this.internalVersion = version; }", currentClass);
-                    currentClass.addMethod(setMethod);
-
-//                    CtMethod method = currentClass.getDeclaredMethod("sanityCheckModId");
-//                    method.insertBefore("{ agent.core.Callbacks.onCreateModContainer($0.source, $0.descriptor); }");
-                    System.out.println("[+] FMLModContainer: ID message installed.");
-                    classBytes = currentClass.toBytecode();
-                } catch (CannotCompileException  | IOException e) {
-                    System.out.println("[-] FMLModContainer: ID message has error while installing.");
-                    e.printStackTrace();
-                }
-
-                break;
             // Minecraft Client run
             case "o.AUx":
                 try {

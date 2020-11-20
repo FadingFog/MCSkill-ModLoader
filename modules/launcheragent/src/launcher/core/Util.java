@@ -72,14 +72,10 @@ public class Util {
                             "{" +
                                         "\"exampleMod.jar\": {" +
                                             "\"servers\" : [\"ServerName1\", \"ServerName2\"], " +
-                                            "\"mod_info\": { " +
-                                                "\"id\": \"newIdValue\", " +
-                                                "\"version\": \"newVersionValue\" " +
-                                            "} " +
+                                            "\"in_handshake\": false," +
                                         "}, " +
                                         " \"exampleMod2.jar\": {" +
                                             "\"servers\" : \"SingleName\", " +
-                                            "\"mod_info\": \"file_to_replace.jar\" " +
                                         "}, " +
                                     "}");
                     jsonRoot.put("customMods", customMods);
@@ -92,7 +88,7 @@ public class Util {
                     if (!customMods.has(fileName))
                     {
                         hasChanges = true;
-                        customMods.put(fileName, new JSONObject("{ \"servers\": null , \"mod_info\": null }"));
+                        customMods.put(fileName, new JSONObject("{ \"servers\": null , \"in_handshake\": true }"));
                     }
                 }
                 jsonRoot.put("customMods", customMods);

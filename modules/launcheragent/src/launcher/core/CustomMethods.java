@@ -80,7 +80,7 @@ public class CustomMethods {
         String fileContent = Util.readFile(PropertiesFields.customModsConfig.toFile());
         JSONObject jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
 
-        JSONObject changeIdList = new JSONObject();
+        JSONObject excludesHandshake = new JSONObject();
 
         if (jsonRoot.has("customMods")){
             JSONObject customMods = jsonRoot.getJSONObject("customMods");
@@ -91,22 +91,15 @@ public class CustomMethods {
                 JSONObject customMod = customMods.getJSONObject(file.getName());
                 Path modPath = clientMods.resolve(file.getName());
 
-                if (customMod.has("mod_info") && !customMod.isNull("mod_info")){
-                    Object modInfoObject = customMod.get("mod_info");
+                if (!customMod.has("servers") || customMod.isNull("servers") || !Util.isContains(customMod.get("servers"), clientName))
+                    continue;
 
-//                    if (modInfoObject.getClass().equals(String.class))
-//                        modPath = clientMods.resolve(modInfoObject.toString());
+                if (Files.exists(modPath))
+                    Files.delete(modPath);
+                Files.copy(file.toPath(), modPath);
 
-                    changeIdList.put(file.getName(), modInfoObject);
-                }
-
-                if (customMod.has("servers") && !customMod.isNull("servers") && Util.isContains(customMod.get("servers"), clientName))
-                {
-
-                    if (Files.exists(modPath))
-                        Files.delete(modPath);
-                    Files.copy(file.toPath(), modPath);
-                }
+                if (customMod.has("in_handshake") && !customMod.isNull("in_handshake") && !customMod.getBoolean("in_handshake"))
+                    excludesHandshake.put(file.getName(), true);
             }
         }
 
@@ -137,7 +130,7 @@ public class CustomMethods {
         Path clientPath = Paths.get(System.getenv("TEMP")).resolve("ClientAgent.jar");
         copyResourceFile("ClientAgent.jar", clientPath);
 
-        if (isDebug)
+        if (PropertiesFields.clientDebug)
             list.addAll(Arrays.asList("cmd", "/c", "start", "cmd", "/k") );
 
         list.add(resolveJavaBin.toString());
@@ -176,9 +169,12 @@ public class CustomMethods {
         environment.put("JAVA_OPTS", "");
         environment.put("JAVA_OPTIONS", "");
 
-        environment.put("MOD_ID_CHANGE_LIST", changeIdList.toString());
+        environment.put("MODS_HANDSHAKE_EXCLUDED", excludesHandshake.toString());
+
         Process process = processBuilder.start();
         System.exit(0);
+
+        // Never reach
         return process;
     }
 
