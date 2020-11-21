@@ -2,6 +2,7 @@ package callow.launcheragent.patch;
 
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
+import callow.launcheragent.Util;
 import javassist.*;
 import javassist.bytecode.Descriptor;
 import o.Prn;
@@ -50,12 +51,13 @@ public class UpdateFilePatcher implements IClassPatcher {
     public static boolean isExclude(Path path, Prn prn, InputStream inputStream) throws IOException {
         if (path.getParent().getFileName().toString().equals("mods")){
             String clientName = path.getParent().getParent().getFileName().toString();
+            String serverName = Util.ClientDirToName.get(clientName);
             String modName = path.getFileName().toString();
 
             ModsConfig config = Agent.modsConfig;
             config.update();
 
-            if (Arrays.stream(config.getExcludesByServerName(clientName)).anyMatch(x -> x.getFilename().equals(modName)))
+            if (Arrays.stream(config.getExcludesByServerName(serverName)).anyMatch(x -> x.getFilename().equals(modName)))
             {
                 System.out.println("[+] Excluded file " + modName + " download prevented");
                 byte[] buffer = new byte[2048];

@@ -2,6 +2,7 @@ package callow.launcheragent.patch;
 
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
+import callow.launcheragent.Util;
 import javassist.*;
 import o.*;
 import org.json.JSONObject;
@@ -46,6 +47,7 @@ public class RunClientPatcher implements IClassPatcher {
         PropertiesFields.loadProperties();
 
         String clientName = serverParams.clientDir.getFileName().toString();
+        String serverName = Util.ClientDirToName.get(clientName);
         System.out.println("[/] Launching: " + clientName);
 
         File customModsDir = PropertiesFields.modsFolderPath.toFile();
@@ -55,7 +57,7 @@ public class RunClientPatcher implements IClassPatcher {
         config.update();
 
         JSONObject excludesHandshake = new JSONObject();
-        for (ModsConfig.IncludeModInfo modInfo : config.getIncludesByServerName(clientName)) {
+        for (ModsConfig.IncludeModInfo modInfo : config.getIncludesByServerName(serverName)) {
             Path modCustomPath = customModsDir.toPath().resolve(modInfo.getFilename());
             Path modClientPath = clientMods.resolve(modInfo.getFilename());
             if (!modCustomPath.toFile().exists())
@@ -69,7 +71,7 @@ public class RunClientPatcher implements IClassPatcher {
                 excludesHandshake.put(modInfo.getFilename(), true);
         }
 
-        for (ModsConfig.StandardInfo modInfo : config.getExcludesByServerName(clientName))
+        for (ModsConfig.StandardInfo modInfo : config.getExcludesByServerName(serverName))
         {
             Path modClientPath = clientMods.resolve(modInfo.getFilename());
             if (modClientPath.toFile().exists())

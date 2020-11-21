@@ -7,6 +7,7 @@ import java.util.*;
 
 public class Util {
 
+    public static Map<String, String> ClientDirToName;
     public static String readFile(File file) throws FileNotFoundException {
         Scanner myReader = new Scanner(file);
         StringBuilder builder = new StringBuilder();
@@ -28,9 +29,11 @@ public class Util {
         COM3 response = (COM3) launcherRequest.request();
 
         List<AUX> serverProfiles = new ArrayList<>();
+        ClientDirToName = new HashMap<>();
         for (Object profile : response.profiles) {
-            cOm7 profileInfo = (cOm7) profile;
-            serverProfiles.add((AUX) profileInfo.object);
+            AUX profileInfo = (AUX)((cOm7)profile).object;
+            ClientDirToName.put(profileInfo.getDir(), profileInfo.getTitle());
+            serverProfiles.add(profileInfo);
         }
         AUX[] result = new AUX[serverProfiles.size()];
         serverProfiles.toArray(result);

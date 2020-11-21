@@ -136,20 +136,20 @@ public class ModsConfig {
             hasChanges = true;
         }
 
-        List<String> serverDirs = new ArrayList<>();
+        List<String> serverTitles = new ArrayList<>();
         for (AUX profile : Util.getServersProfiles())
-            serverDirs.add(profile.getDir());
+            serverTitles.add(profile.getTitle());
 
         if (!jsonRoot.has("ServerNames")) {
             hasChanges = true;
-            jsonRoot.put("ServerNames", serverDirs);
+            jsonRoot.put("ServerNames", serverTitles);
         }
         else {
             List<Object> names = jsonRoot.getJSONArray("ServerNames").toList();
-            for (String dirName: serverDirs){
-                if (!names.contains(dirName)) {
+            for (String title: serverTitles){
+                if (!names.contains(title)) {
                     hasChanges = true;
-                    names.add(dirName);
+                    names.add(title);
                 }
             }
             jsonRoot.put("ServerNames", names);
@@ -211,6 +211,6 @@ public class ModsConfig {
     }
 
     public StandardInfo[] getExcludesByServerName(String serverName) {
-        return (StandardInfo[]) excludeMods.stream().filter(x -> x.hasServer(serverName)).toArray(StandardInfo[]::new);
+        return excludeMods.stream().filter(x -> x.hasServer(serverName)).toArray(StandardInfo[]::new);
     }
 }
