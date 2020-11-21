@@ -1,4 +1,4 @@
-package agent.core.patch;
+package callow.clientagent.patch;
 
 import javassist.*;
 import oshi.SystemInfo;
@@ -6,6 +6,7 @@ import oshi.hardware.ComputerSystem;
 import oshi.hardware.Display;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
+import callow.common.IClassPatcher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class HWIdPatcher implements IClassPatcher {
 
         try {
             CtMethod method = ctClass.getDeclaredMethod(getHWIdMethod);
-            method.setBody(String.format("{ java.lang.String[] params =  agent.core.patch.HWIdPatcher.getRandomHWId();" +
+            method.setBody(String.format("{ java.lang.String[] params = callow.clientagent.patch.HWIdPatcher.getRandomHWId();" +
                     "return %s(params[0]) + \"@\" + %s(params[1]) + \"@\" + %s(params[2]); }", AESEncoderMethod, AESEncoderMethod, AESEncoderMethod ));
             System.out.println("[+] Patcher | HWId patch created.");
         } catch (NotFoundException | CannotCompileException e) {

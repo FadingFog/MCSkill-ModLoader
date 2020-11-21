@@ -3,9 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/LauncherAgent</output-path>
     <root id="archive" name="LauncherAgent.jar">
       <element id="module-output" name="LauncherAgent" />
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/modules/launcheragent/src/META-INF/MANIFEST.MF" />
-      </element>
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/javassist/javassist/3.27.0-GA/javassist-3.27.0-GA.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20201115/json-20201115.jar" path-in-jar="/" />
       <element id="module-output" name="Common" />

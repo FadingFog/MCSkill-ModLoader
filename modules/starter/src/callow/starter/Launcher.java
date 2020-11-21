@@ -1,13 +1,13 @@
-package starter.core;
+package callow.starter;
 
-import common.PropertiesFields;
+import callow.common.PropertiesFields;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static common.Utils.copyResourceFile;
-import static common.Utils.findMCSkillDir;
+import static callow.common.Utils.copyResourceFile;
+import static callow.common.Utils.findMCSkillDir;
 
 public class Launcher {
 

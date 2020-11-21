@@ -1,10 +1,10 @@
-package agent.core.patch;
+package callow.clientagent.patch;
 
 import javassist.*;
 import org.json.JSONObject;
+import callow.common.IClassPatcher;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,7 +29,7 @@ public class HandshakePatcher implements IClassPatcher {
 
             method.insertBefore(String.format(
                     "if ($2.getClass().equals(%s.fml.common.network.handshake.FMLHandshakeMessage.ModList.class)) " +
-                            "{ agent.core.patch.HandshakePatcher.sendHandshakeModList(%s.fml.common.Loader.instance().getActiveModList(), $3, \"%s\"); return; }",
+                            "{ callow.clientagent.patch.HandshakePatcher.sendHandshakeModList(%s.fml.common.Loader.instance().getActiveModList(), $3, \"%s\"); return; }",
                     prefix, prefix, prefix));
 
             System.out.println("[+] Patcher | FMLHandshake patch created.");

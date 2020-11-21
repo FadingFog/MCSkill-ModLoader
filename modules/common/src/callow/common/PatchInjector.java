@@ -1,9 +1,5 @@
-package agent.core;
+package callow.common;
 
-import agent.core.patch.ClientStartPatcher;
-import agent.core.patch.HWIdPatcher;
-import agent.core.patch.HandshakePatcher;
-import agent.core.patch.IClassPatcher;
 import javassist.*;
 
 import java.io.IOException;
@@ -17,24 +13,26 @@ import java.util.stream.Stream;
 public class PatchInjector implements ClassFileTransformer {
 
     private final ClassPool pool;
-    private final IClassPatcher[] patchers = { new ClientStartPatcher(), new HandshakePatcher(), new HWIdPatcher() };
+    private final IClassPatcher[] patchers;
 
-    PatchInjector() {
+    public PatchInjector(IClassPatcher[] patchers, boolean loadDirs) {
+        this.patchers = patchers;
         pool = ClassPool.getDefault();
-        try (Stream<Path> paths = Files.walk(Paths.get(""))) {
-            paths
-                    .filter(Files::isDirectory)
-                    .forEach(path -> {
-                        try {
-                            pool.appendPathList(path.toString() + "\\*");
-                        } catch (NotFoundException e) {
-                            System.out.println("[-] Failed to add dir to ClassPool: " + path.toString());
-                        }
-                    });
-        } catch (Exception e) {
-            System.out.println("[-] Failed add paths in ClassPool.");
-            e.printStackTrace();
-        }
+        if (loadDirs)
+            try (Stream<Path> paths = Files.walk(Paths.get(""))) {
+                paths
+                        .filter(Files::isDirectory)
+                        .forEach(path -> {
+                            try {
+                                pool.appendPathList(path.toString() + "\\*");
+                            } catch (NotFoundException e) {
+                                System.out.println("[-] Failed to add dir to ClassPool: " + path.toString());
+                            }
+                        });
+            } catch (Exception e) {
+                System.out.println("[-] Failed add paths in ClassPool.");
+                e.printStackTrace();
+            }
     }
 
     @Override

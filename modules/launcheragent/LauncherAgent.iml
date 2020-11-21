@@ -9,7 +9,7 @@
     <orderEntry type="library" name="Launcher" level="project" />
     <orderEntry type="library" exported="" name="org.javassist:javassist:3.27.0-GA" level="project" />
     <orderEntry type="library" exported="" name="org.json:json:20201115" level="project" />
-    <orderEntry type="module" module-name="Common" />
+    <orderEntry type="module" module-name="Common" exported="" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

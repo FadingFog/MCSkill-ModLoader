@@ -1,9 +1,9 @@
-package agent.core.patch;
+package callow.clientagent.patch;
 
 import javassist.*;
 import o.*;
+import callow.common.IClassPatcher;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.security.interfaces.RSAPublicKey;
 
@@ -15,7 +15,7 @@ public class ClientStartPatcher implements IClassPatcher {
 
         try {
             CtMethod method = ctClass.getDeclaredMethod("main");
-            method.setBody("{ Object[] params = agent.core.patch.ClientStartPatcher.modifyRunParams($1); o.AUx.aux((o.AUX)params[0], (o.aUX)params[1]); }");
+            method.setBody("{ Object[] params = callow.clientagent.patch.ClientStartPatcher.modifyRunParams($1); o.AUx.aux((o.AUX)params[0], (o.aUX)params[1]); }");
 
             System.out.println("[+] Patcher | ClientStart patch created.");
         } catch (NotFoundException | CannotCompileException e) {
