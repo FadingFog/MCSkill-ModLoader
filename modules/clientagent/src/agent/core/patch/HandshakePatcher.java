@@ -1,35 +1,47 @@
-package agent.core;
+package agent.core.patch;
 
-import javassist.CtClass;
-import javassist.CtMethod;
-import o.*;
+import javassist.*;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.file.Path;
-import java.security.interfaces.RSAPublicKey;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
-public class Callbacks {
-    public static final List<String> excludeList = new ArrayList<>();
+public class HandshakePatcher implements IClassPatcher {
+    @Override
+    public boolean patch(ClassPool pool, CtClass ctClass) {
+        String prefix;
+        if (ctClass.getName().equals("cpw.mods.fml.common.network.handshake.FMLHandshakeCodec"))
+            prefix = "cpw.mods";
+        else if (ctClass.getName().equals("net.minecraftforge.fml.common.network.handshake.FMLHandshakeCodec"))
+            prefix = "net.minecraftforge";
+        else
+            return false;
 
-    public static Object[] onRunningClient(final String... array){
-        final RSAPublicKey publicKey = o.aux.getConfig().publicKey;
-        final Path path = PRn.toPath(array[0]);
-        aUX clientParams;
-        AUX serverProfile;
-        try (final cOm5 cOm5 = new cOm5(PRn.newInput(path))) {
-            clientParams = new aUX(cOm5);
-            serverProfile = (AUX)new cOm7(cOm5, publicKey, AUX.RO_ADAPTER).object;
+        try {
+            CtMethod method = ctClass.getDeclaredMethod("encodeInto");
+
+            method.insertBefore(String.format(
+                    "if ($2.getClass().equals(%s.fml.common.network.handshake.FMLHandshakeMessage.ModList.class)) " +
+                            "{ agent.core.patch.HandshakePatcher.sendHandshakeModList(%s.fml.common.Loader.instance().getActiveModList(), $3, \"%s\"); return; }",
+                    prefix, prefix, prefix));
+
+            System.out.println("[+] Patcher | FMLHandshake patch created.");
+        } catch (NotFoundException | CannotCompileException e) {
+            System.out.println("[-] Patcher | FMLCodec patch process failed.");
+            e.printStackTrace();
+            return false;
         }
-        return new Object[] { serverProfile, clientParams };
+        return true;
     }
 
-    public static void onSendModLog(List<Object> modContainers, Object targetBuffer, String prefix) {
+    public static void sendHandshakeModList(List<Object> modContainers, Object targetBuffer, String prefix) {
         try {
             final Class<?> ByteBufClass = Class.forName("io.netty.buffer.ByteBuf");
 
