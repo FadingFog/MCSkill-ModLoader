@@ -32,15 +32,15 @@ public class LauncherStartPatcher implements IClassPatcher {
 
     public static void updateConfigs() {
         try {
-            Agent.modsConfig = new ModsConfig(PropertiesFields.customModsConfig.toFile());
+            Agent.modsConfig = new ModsConfig(PropertiesFields.modJSONConfig.toFile());
         } catch (IOException e) {
             System.out.println("[-] Loading mods config file was failed.");
             e.printStackTrace();
         }
 
-        if (!Files.exists(PropertiesFields.modsFolderPath)) {
+        if (!Files.exists(PropertiesFields.includeModsDir)) {
             try {
-                Files.createDirectories(PropertiesFields.modsFolderPath);
+                Files.createDirectories(PropertiesFields.includeModsDir);
                 System.out.println("[+] Custom mods directory was created.");
             } catch (IOException e) {
                 System.out.println("[-] Couldn't custom mods directory.");

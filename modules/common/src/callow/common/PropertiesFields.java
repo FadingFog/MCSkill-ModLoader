@@ -13,8 +13,8 @@ public class PropertiesFields {
     static final String propertiesFilename = "customLauncher.ini";
     public static boolean clientDebug = false;
     public static boolean launcherDebug = false;
-    public static Path modsFolderPath = FileSystems.getDefault().getPath("customMods");
-    public static Path customModsConfig = FileSystems.getDefault().getPath("customMods.json");
+    public static Path includeModsDir = FileSystems.getDefault().getPath("customMods");
+    public static Path modJSONConfig = FileSystems.getDefault().getPath("customMods.json");
 
     public static void loadProperties(){
         Properties props = new Properties();
@@ -24,8 +24,8 @@ public class PropertiesFields {
             props.load(new FileInputStream(configFile));
             PropertiesFields.clientDebug = Boolean.parseBoolean(props.getProperty("clientDebug"));
             PropertiesFields.launcherDebug = Boolean.parseBoolean(props.getProperty("launcherDebug"));
-            PropertiesFields.customModsConfig = FileSystems.getDefault().getPath(props.getProperty("customModsConfig"));
-            PropertiesFields.modsFolderPath = FileSystems.getDefault().getPath(props.getProperty("modsFolder"));
+            PropertiesFields.modJSONConfig = FileSystems.getDefault().getPath(props.getProperty("modJSONConfig"));
+            PropertiesFields.includeModsDir = FileSystems.getDefault().getPath(props.getProperty("includeModsDir"));
             System.out.println("[+] Config was read successfully.");
         } catch (IOException readException) {
             System.out.println("[-] File with config wasn't found.");
@@ -33,8 +33,8 @@ public class PropertiesFields {
             try {
                 props.setProperty("launcherDebug", Boolean.toString(PropertiesFields.launcherDebug));
                 props.setProperty("clientDebug", Boolean.toString(PropertiesFields.clientDebug));
-                props.setProperty("customModsConfig", PropertiesFields.customModsConfig.toString());
-                props.setProperty("modsFolder", PropertiesFields.modsFolderPath.toString());
+                props.setProperty("modJSONConfig", PropertiesFields.modJSONConfig.toString());
+                props.setProperty("includeModsDir", PropertiesFields.includeModsDir.toString());
                 props.store(new FileOutputStream(configFile), null);
                 System.out.println("[+] New config file has created.");
             } catch (IOException writeException){

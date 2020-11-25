@@ -50,7 +50,7 @@ public class RunClientPatcher implements IClassPatcher {
         String serverName = Util.ClientDirToName.get(clientName);
         System.out.println("[/] Launching: " + clientName);
 
-        File customModsDir = PropertiesFields.modsFolderPath.toFile();
+        File customModsDir = PropertiesFields.includeModsDir.toFile();
         Path clientMods = serverParams.clientDir.resolve("mods");
 
         ModsConfig config = Agent.modsConfig;

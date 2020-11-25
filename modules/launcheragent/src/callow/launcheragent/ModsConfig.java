@@ -164,7 +164,7 @@ public class ModsConfig {
             jsonRoot.put(includeBlockName, customMods);
         }
 
-        File includeModsDir = PropertiesFields.modsFolderPath.toFile();
+        File includeModsDir = PropertiesFields.includeModsDir.toFile();
         if (!includeModsDir.isDirectory()) {
             Files.createDirectories(includeModsDir.toPath());
             System.out.println("[+] Created include mods directory.");
