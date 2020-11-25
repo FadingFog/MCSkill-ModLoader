@@ -20,11 +20,6 @@ public class Launcher {
             return;
         }
 
-        Path javaExec = getJVMExec(launcherDir);
-        if (javaExec == null) {
-            System.out.println("[-] Error: JVM file isn't found.");
-            return;
-        }
         Path launcherAgent = launcherDir.resolve(LauncherAgentName);
         if (Files.exists(launcherAgent))
             Files.delete(launcherAgent);
@@ -33,23 +28,10 @@ public class Launcher {
         PropertiesFields.loadProperties();
 
         Runtime runtime = Runtime.getRuntime();
-        runtime.exec(String.format("cmd /c %s \"%s -javaagent:%s -jar Launcher.jar\"",
-                                    PropertiesFields.launcherDebug ? "start cmd /k" : "", javaExec.toString(), LauncherAgentName),
+        runtime.exec(String.format("cmd /c %s \"java -javaagent:%s -jar Launcher.jar\"",
+                                    PropertiesFields.launcherDebug ? "start cmd /k" : "", LauncherAgentName),
                 null, launcherDir.toFile());
 
         System.out.println("[+] Launcher successfully started.");
-    }
-
-    public static Path getJVMExec(Path launcher) {
-        final String[] javaExecs = {"java.exe", "javaw.exe"};
-        Path jvmDir = launcher.resolve("jdk-win64/bin");
-        if (!Files.isDirectory(jvmDir))
-            return null;
-        for (String javaExecName: javaExecs){
-            Path javaExec = jvmDir.resolve(javaExecName);
-            if (Files.exists(javaExec))
-                return javaExec;
-        }
-        return null;
     }
 }

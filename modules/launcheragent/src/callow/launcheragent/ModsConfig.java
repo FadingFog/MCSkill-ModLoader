@@ -10,6 +10,7 @@ import callow.common.PropertiesFields;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 public class ModsConfig {
@@ -163,8 +164,13 @@ public class ModsConfig {
             jsonRoot.put(includeBlockName, customMods);
         }
 
+        File includeModsDir = PropertiesFields.modsFolderPath.toFile();
+        if (!includeModsDir.isDirectory()) {
+            Files.createDirectories(includeModsDir.toPath());
+            System.out.println("[+] Created include mods directory.");
+        }
         JSONObject customMods = jsonRoot.getJSONObject(includeBlockName);
-        for (String fileName : Objects.requireNonNull(PropertiesFields.modsFolderPath.toFile().list())){
+        for (String fileName : Objects.requireNonNull(includeModsDir.list())){
             if (!fileName.endsWith(".litemod") && !fileName.endsWith(".jar"))
                 continue;
             if (!customMods.has(fileName))
