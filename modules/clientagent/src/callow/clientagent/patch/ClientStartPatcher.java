@@ -1,7 +1,7 @@
 package callow.clientagent.patch;
 
 import javassist.*;
-import o.*;
+import launcher.*;
 import callow.common.IClassPatcher;
 
 import java.nio.file.Path;
@@ -10,12 +10,12 @@ import java.security.interfaces.RSAPublicKey;
 public class ClientStartPatcher implements IClassPatcher {
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        if (!ctClass.getName().equals("o.AUx"))
+        if (!ctClass.getName().equals("launcher.AUx"))
             return false;
 
         try {
             CtMethod method = ctClass.getDeclaredMethod("main");
-            method.setBody("{ Object[] params = callow.clientagent.patch.ClientStartPatcher.modifyRunParams($1); o.AUx.aux((o.AUX)params[0], (o.aUX)params[1]); }");
+            method.setBody("{ Object[] params = callow.clientagent.patch.ClientStartPatcher.modifyRunParams($1); launcher.AUx.aux((launcher.AUX)params[0], (launcher.aUX)params[1]); }");
 
             System.out.println("[+] Patcher | ClientStart patch created.");
         } catch (NotFoundException | CannotCompileException e) {
@@ -27,7 +27,7 @@ public class ClientStartPatcher implements IClassPatcher {
     }
 
     public static Object[] modifyRunParams(final String... array){
-        final RSAPublicKey publicKey = o.aux.getConfig().publicKey;
+        final RSAPublicKey publicKey = aux.getConfig().publicKey;
         final Path path = PRn.toPath(array[0]);
         aUX clientParams;
         AUX serverProfile;

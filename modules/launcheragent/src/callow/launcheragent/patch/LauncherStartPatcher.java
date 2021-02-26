@@ -5,7 +5,7 @@ import callow.launcheragent.ModsConfig;
 import javassist.*;
 import callow.common.IClassPatcher;
 import callow.common.PropertiesFields;
-import o.Com1;
+import launcher.Com1;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import java.nio.file.Files;
 public class LauncherStartPatcher implements IClassPatcher {
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        if (!ctClass.getName().equals("o.aux"))
+        if (!ctClass.getName().equals("launcher.aux"))
             return false;
         try {
             // Method start running after program initialization

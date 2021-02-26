@@ -4,7 +4,7 @@ import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
 import callow.launcheragent.Util;
 import javassist.*;
-import o.*;
+import launcher.*;
 import org.json.JSONObject;
 import callow.common.IClassPatcher;
 import callow.common.PropertiesFields;
@@ -22,7 +22,7 @@ public class RunClientPatcher implements IClassPatcher {
 
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        if (!ctClass.getName().equals("o.AUx"))
+        if (!ctClass.getName().equals("launcher.AUx"))
             return false;
 
         // Minecraft Client launch method
@@ -107,8 +107,8 @@ public class RunClientPatcher implements IClassPatcher {
         }
         list.add(String.format("-D%s=%s", "launcher.debug", Com1.isDebugEnabled()));
 
-        if (o.Aux.ADDRESS_OVERRIDE != null) {
-            list.add(String.format("-D%s=%s", "launcher.addressOverride", o.Aux.ADDRESS_OVERRIDE));
+        if (launcher.Aux.ADDRESS_OVERRIDE != null) {
+            list.add(String.format("-D%s=%s", "launcher.addressOverride", launcher.Aux.ADDRESS_OVERRIDE));
         }
 
         if (PRN.OS_TYPE == com1.MUSTDIE && PRN.OS_VERSION.startsWith("10.")) {

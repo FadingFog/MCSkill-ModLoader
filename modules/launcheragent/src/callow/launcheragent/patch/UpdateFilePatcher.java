@@ -5,7 +5,7 @@ import callow.launcheragent.ModsConfig;
 import callow.launcheragent.Util;
 import javassist.*;
 import javassist.bytecode.Descriptor;
-import o.Prn;
+import launcher.Prn;
 import callow.common.IClassPatcher;
 
 import java.io.EOFException;
@@ -18,7 +18,7 @@ public class UpdateFilePatcher implements IClassPatcher {
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
         // File updating class
-        if (!ctClass.getName().equals("o.Com4"))
+        if (!ctClass.getName().equals("launcher.Com4"))
             return false;
 
         // Method aux used for every check file
@@ -30,7 +30,7 @@ public class UpdateFilePatcher implements IClassPatcher {
             // Update callback
             CtClass[] paramTypes = {
                     pool.get("java.nio.file.Path"),
-                    pool.get("o.Prn"),
+                    pool.get("launcher.Prn"),
                     pool.get("java.io.InputStream"),
             };
 
