@@ -15,6 +15,7 @@ public class PropertiesFields {
     public static boolean launcherDebug = false;
     public static Path includeModsDir = FileSystems.getDefault().getPath("customMods");
     public static Path modJSONConfig = FileSystems.getDefault().getPath("customMods.json");
+    public static boolean clientInjection = true;
 
     public static void loadProperties(){
         Properties props = new Properties();
@@ -26,6 +27,7 @@ public class PropertiesFields {
             PropertiesFields.launcherDebug = Boolean.parseBoolean(props.getProperty("launcherDebug"));
             PropertiesFields.modJSONConfig = FileSystems.getDefault().getPath(props.getProperty("modJSONConfig"));
             PropertiesFields.includeModsDir = FileSystems.getDefault().getPath(props.getProperty("includeModsDir"));
+            PropertiesFields.clientInjection = Boolean.parseBoolean(props.getProperty("clientInjection"));
             System.out.println("[+] Config was read successfully.");
         } catch (IOException readException) {
             System.out.println("[-] File with config wasn't found.");
@@ -35,6 +37,7 @@ public class PropertiesFields {
                 props.setProperty("clientDebug", Boolean.toString(PropertiesFields.clientDebug));
                 props.setProperty("modJSONConfig", PropertiesFields.modJSONConfig.toString());
                 props.setProperty("includeModsDir", PropertiesFields.includeModsDir.toString());
+                props.setProperty("clientInjection", Boolean.toString(PropertiesFields.clientInjection));
                 props.store(new FileOutputStream(configFile), null);
                 System.out.println("[+] New config file has created.");
             } catch (IOException writeException){
