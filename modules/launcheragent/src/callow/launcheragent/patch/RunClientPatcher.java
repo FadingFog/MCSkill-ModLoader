@@ -98,8 +98,14 @@ public class RunClientPatcher implements IClassPatcher {
             list.addAll(Arrays.asList("cmd", "/c", "start", "cmd", "/k") );
 
         list.add(resolveJavaBin.toString());
-        if (PropertiesFields.clientInjection)
+        if (PropertiesFields.clientInjection){
             list.add(String.format("-javaagent:\"%s\"", clientPath.toAbsolutePath().toString()));
+            System.out.println("[+] Client agent was injected.");
+        }
+        else {
+            System.out.println("[+] Client agent wasn't injected.");
+        }
+
         list.add("-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
 
         if (serverParams.ram > 0 && serverParams.ram <= PRN.RAM) {

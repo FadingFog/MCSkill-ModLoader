@@ -25,8 +25,13 @@ public class HWIdPatcher implements IClassPatcher {
     private static final String getHWIdMethod = "IIlIlIllllIIlllllIlIlllllIIIIlIIIIlllIIlIIllllllIIIIllIlllIIlIIIlIIlIIIIlIllIllllllIIllIIIlIIllIIIlIlIIlIlIlIlIlIIllIlIIlllIIIlI";
     private static final String AESEncoderMethod = "IIlIlIlIlIlIllIIIIlIIIIIIIIllIIlIlIIIIlllIlIIlIllIIllIllIIIIIlIIlIllIIIIllllIIIIlIllIllIIlIlIIIlIIlIIIllIlllllIlllIllIIIIIlIlIll.IIIIlIIlllIllIIIlIIlIlIIlIIIIIlllllIIIllllIIIIlllIIIllllIlIIIIlllllIIlIllIllIIlIIllIllllIlIlllllIlIlIIllIlIIlIllIIlIIIIlIllIllIl.IlIlllllIIIlIIllIlIlIlllIIlIlIlIIIIllIlIIIllIIlllIIIllIlIlIllIIllIIlllllIIlIIIIIIIIIIlIIlIllIlllIlIIIIlIIllIIlIIlIlIlIIllllIlIIl.llIlIlIlllIIIIIlIlIIlIlIllIlIIIlIIIllIlIlIIIlIIlllIIllIllIllIIIllIIIllIllIlllIIlIlIlIIllIlIIIIllllIlIlIIlIIIlIllIIIlIllIlIllIIlI.IIlIlIllllIIlllllIlIlllllIIIIlIIIIlllIIlIIllllllIIIIllIlllIIlIIIlIIlIIIIlIllIllllllIIllIIIlIIllIIIlIlIIlIlIlIlIlIIllIlIIlllIIIlI";
 
+    private static final String newHWidClass = "com.luffy.mixedmods.common.utils.HWDetails";
+    private static final String newBannedHWidMethod = "getInfo";
+    private static final String newMacHWidMethod = "getMac";
+
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
+
         if (!ctClass.getName().equals(getHWIdClass))
             return false;
 
@@ -41,6 +46,13 @@ public class HWIdPatcher implements IClassPatcher {
             return false;
         }
         return true;
+    }
+
+    public static String getRandomMac()
+    {
+        SystemInfo systemInfo = new SystemInfo();
+        HardwareAbstractionLayer hardware = systemInfo.getHardware();
+        return randomReplace(hardware.getNetworkIFs().get(0).getMacaddr(), true);
     }
 
     public static String[] getRandomHWId() {
@@ -76,7 +88,7 @@ public class HWIdPatcher implements IClassPatcher {
         }
         currentPartBuilder.append(", ").append(Paths.get(absolutePath).toAbsolutePath());
 
-        currentPartBuilder.append(", mac: ").append(randomReplace(hardware.getNetworkIFs().get(0).getMacaddr(), true));
+        currentPartBuilder.append(", mac: ").append(getRandomMac());
         HWIdStrings[2] = currentPartBuilder.toString();
 
         System.out.println("[+] Sending random HWId: ");
