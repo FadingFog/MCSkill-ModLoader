@@ -44,7 +44,16 @@ public class RunClientPatcher implements IClassPatcher {
         return true;
     }
 
-    public static Process customLaunch(final Path jvmDir, final com8 jvmHDir, final com8 assetHDir, final com8 clientHDir, final com8 profile, final aUX serverParams, final boolean isDebug) throws IOException {
+    public static Process customLaunch(final Path jvmDir, final com8 jvmHDir, final com8 assetHDir,
+                                       final com8 clientHDir, final com8 profile, final aUX serverParams,
+                                       final boolean isDebug) throws IOException
+    {
+        try {
+            Agent.modsConfig = new ModsConfig(PropertiesFields.modJSONConfig.toFile());
+        } catch (IOException e) {
+            System.out.println("[-] Loading mods config file was failed.");
+            e.printStackTrace();
+        }
 
         PropertiesFields.loadProperties();
 
