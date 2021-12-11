@@ -28,12 +28,12 @@ public class ClientStartPatcher implements IClassPatcher {
 
     public static Object[] modifyRunParams(final String... array){
         final RSAPublicKey publicKey = aux.getConfig().publicKey;
-        final Path path = PRn.toPath(array[0]);
+        final Path path = PRN.toPath(array[0]);
         aUX clientParams;
         AUX serverProfile;
-        try (final cOm5 cOm5 = new cOm5(PRn.newInput(path))) {
-            clientParams = new aUX(cOm5);
-            serverProfile = (AUX)new cOm7(cOm5, publicKey, AUX.RO_ADAPTER).object;
+        try (final com6 com6 = new com6(PRN.newInput(path))) {
+            clientParams = new aUX(com6);
+            serverProfile = (AUX)new com8(com6, publicKey, AUX.RO_ADAPTER).object;
         }
         return new Object[] { serverProfile, clientParams };
     }

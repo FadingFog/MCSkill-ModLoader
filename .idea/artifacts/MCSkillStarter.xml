@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/MCSkillStarter</output-path>
     <root id="archive" name="MCSkillStarter.jar">
       <element id="module-output" name="Starter" />
-      <element id="artifact" artifact-name="LauncherAgent:jar" />
+      <element id="artifact" artifact-name="LauncherAgent" />
       <element id="module-output" name="Common" />
     </root>
   </artifact>

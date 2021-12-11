@@ -25,13 +25,13 @@ public class Util {
 
     public static AUX[] getServersProfiles() {
         Aux config = aux.getConfig();
-        CoM3 launcherRequest = new CoM3(config);
-        COM3 response = (COM3) launcherRequest.request();
+        COm4 launcherRequest = new COm4();
+        CoM4 response = (CoM4) launcherRequest.request();
 
         List<AUX> serverProfiles = new ArrayList<>();
         ClientDirToName = new HashMap<>();
         for (Object profile : response.profiles) {
-            AUX profileInfo = (AUX)((cOm7)profile).object;
+            AUX profileInfo = (AUX)((com8)profile).object;
             ClientDirToName.put(profileInfo.getDir(), profileInfo.getTitle());
             serverProfiles.add(profileInfo);
         }

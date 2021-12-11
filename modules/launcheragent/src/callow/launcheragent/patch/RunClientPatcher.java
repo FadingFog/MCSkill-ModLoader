@@ -9,12 +9,16 @@ import org.json.JSONObject;
 import callow.common.IClassPatcher;
 import callow.common.PropertiesFields;
 
+import javax.lang.model.type.NoType;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static callow.common.Utils.copyResourceFile;
 
@@ -42,7 +46,7 @@ public class RunClientPatcher implements IClassPatcher {
         return true;
     }
 
-    public static Process customLaunch(final Path jvmDir, final cOm7 jvmHDir, final cOm7 assetHDir, final cOm7 clientHDir, final cOm7 profile, final aUX serverParams, final boolean isDebug) throws IOException {
+    public static Process customLaunch(final Path jvmDir, final com8 jvmHDir, final com8 assetHDir, final com8 clientHDir, final com8 profile, final aUX serverParams, final boolean isDebug) throws IOException {
 
         PropertiesFields.loadProperties();
 
@@ -80,7 +84,7 @@ public class RunClientPatcher implements IClassPatcher {
 
         // Copied from decompiled code
         final Path tempFile = Files.createTempFile("ClientLauncherParams", ".bin");
-        try (final COm5 cOm11 = new COm5(PRn.newOutput(tempFile))) {
+        try (final Com6 cOm11 = new Com6(PRN.newOutput(tempFile))) {
             serverParams.write(cOm11);
             profile.write(cOm11);
             jvmHDir.write(cOm11);
@@ -88,8 +92,8 @@ public class RunClientPatcher implements IClassPatcher {
             clientHDir.write(cOm11);
         }
 
-        Com1.debug("Resolving JVM binary");
-        final Path resolveJavaBin = PRn.resolveJavaBin(jvmDir);
+        CoM1.debug("Resolving JVM binary");
+        final Path resolveJavaBin = PRN.resolveJavaBin(jvmDir);
         final List<String> list = new ArrayList<>();
         Path clientPath = Paths.get(System.getenv("TEMP")).resolve("ClientAgent.jar");
         copyResourceFile("ClientAgent.jar", clientPath);
@@ -98,8 +102,14 @@ public class RunClientPatcher implements IClassPatcher {
             list.addAll(Arrays.asList("cmd", "/c", "start", "cmd", "/k") );
 
         list.add(resolveJavaBin.toString());
+
+        if (Boolean.getBoolean("idea.debug")){
+            list.add("-Xdebug");
+            list.add("-agentlib:jdwp=transport=dt_socket,address=9000,server=y,suspend=y");
+        }
+
         if (PropertiesFields.clientInjection){
-            list.add(String.format("-javaagent:\"%s\"", clientPath.toAbsolutePath().toString()));
+            list.add(String.format("-javaagent:\"%s\"", clientPath.toAbsolutePath()));
             System.out.println("[+] Client agent was injected.");
         }
         else {
@@ -108,27 +118,34 @@ public class RunClientPatcher implements IClassPatcher {
 
         list.add("-XX:HeapDumpPath=ThisTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
 
-        if (serverParams.ram > 0 && serverParams.ram <= PRN.RAM) {
+        if (serverParams.ram > 0 && serverParams.ram <= COm1.RAM) {
             list.add("-Xms" + serverParams.ram + 'M');
             list.add("-Xmx" + serverParams.ram + 'M');
         }
-        list.add(String.format("-D%s=%s", "launcher.debug", Com1.isDebugEnabled()));
+        list.add(String.format("-D%s=%s", "launcher.debug", CoM1.isDebugEnabled()));
 
         if (launcher.Aux.ADDRESS_OVERRIDE != null) {
             list.add(String.format("-D%s=%s", "launcher.addressOverride", launcher.Aux.ADDRESS_OVERRIDE));
         }
 
-        if (PRN.OS_TYPE == com1.MUSTDIE && PRN.OS_VERSION.startsWith("10.")) {
-            Com1.debug("MustDie 10 fix is applied");
+        if (COm1.OS_TYPE == coM1.MUSTDIE && COm1.OS_VERSION.startsWith("10.")) {
+            CoM1.debug("MustDie 10 fix is applied");
             list.add(String.format("-D%s=%s", "os.name", "Windows 10"));
             list.add(String.format("-D%s=%s", "os.version", "10.0"));
         }
-
         Collections.addAll(list, ((AUX)profile.object).getJvmArgs());
-        Collections.addAll(list, "-classpath", PRn.getCodeSource(AUx.class).toString(), AUx.class.getName());
+
+        Stream<?> stream = AUx.aux((AUX)profile.object, serverParams.clientDir);
+        List<String> classes = stream.map(Object::toString).collect(Collectors.toList());
+
+        String sep = COm1.OS_TYPE == coM1.MUSTDIE ? ";" : ":";
+
+        Collections.addAll(list, "-classpath",
+                PRN.getCodeSource(AUx.class).toString() + sep + String.join(sep, classes),
+                AUx.class.getName());
         list.add(tempFile.toString());
-        Com1.debug("Commandline: " + list);
-        Com1.debug("Launching client instance");
+        CoM1.debug("Commandline: " + list);
+        CoM1.debug("Launching client instance");
 
         final ProcessBuilder processBuilder = new ProcessBuilder(list);
         processBuilder.directory(serverParams.clientDir.toFile());
@@ -143,7 +160,7 @@ public class RunClientPatcher implements IClassPatcher {
         environment.put("MODS_HANDSHAKE_EXCLUDED", excludesHandshake.toString());
 
         Process process = processBuilder.start();
-        System.exit(0);
+        COm1.RUNTIME.exit(0);
 
         // Never reach
         return process;

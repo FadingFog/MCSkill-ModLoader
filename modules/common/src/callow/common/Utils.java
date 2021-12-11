@@ -1,9 +1,6 @@
 package callow.common;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +8,14 @@ import java.nio.file.Paths;
 public class Utils {
     public static void copyResourceFile(String resource, Path destination) throws IOException {
         InputStream is = Utils.class.getResourceAsStream("/" + resource);
+
+        if (is == null) {
+            System.out.println("[-] Cannot find LauncherAgent.jar file withing .jar classpath. " +
+                    "Maybe you have ran program with IDEA?");
+            System.out.println("[-] File path: "
+                    + Thread.currentThread().getContextClassLoader().getResource("/LauncherAgent.jar"));
+            return;
+        }
 
         if (!Files.exists(destination))
             Files.createFile(destination);

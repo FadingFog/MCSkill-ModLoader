@@ -5,7 +5,7 @@ import callow.launcheragent.ModsConfig;
 import javassist.*;
 import callow.common.IClassPatcher;
 import callow.common.PropertiesFields;
-import launcher.Com1;
+import launcher.CoM1;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,7 +32,7 @@ public class LauncherStartPatcher implements IClassPatcher {
     }
 
     public static void updateConfigs() {
-        Com1.setDebugEnabled(PropertiesFields.clientDebug);
+        CoM1.setDebugEnabled(PropertiesFields.clientDebug);
         try {
             Agent.modsConfig = new ModsConfig(PropertiesFields.modJSONConfig.toFile());
         } catch (IOException e) {

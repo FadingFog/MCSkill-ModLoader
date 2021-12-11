@@ -5,7 +5,7 @@ import callow.launcheragent.ModsConfig;
 import callow.launcheragent.Util;
 import javassist.*;
 import javassist.bytecode.Descriptor;
-import launcher.Prn;
+import launcher.PRn;
 import callow.common.IClassPatcher;
 
 import java.io.EOFException;
@@ -18,7 +18,7 @@ public class UpdateFilePatcher implements IClassPatcher {
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
         // File updating class
-        if (!ctClass.getName().equals("launcher.Com4"))
+        if (!ctClass.getName().equals("launcher.COM4"))
             return false;
 
         // Method aux used for every check file
@@ -30,7 +30,7 @@ public class UpdateFilePatcher implements IClassPatcher {
             // Update callback
             CtClass[] paramTypes = {
                     pool.get("java.nio.file.Path"),
-                    pool.get("launcher.Prn"),
+                    pool.get("launcher.PRn"),
                     pool.get("java.io.InputStream"),
             };
 
@@ -38,17 +38,17 @@ public class UpdateFilePatcher implements IClassPatcher {
                     Descriptor.ofMethod(CtPrimitiveType.voidType, paramTypes));
             method.insertBefore("if (callow.launcheragent.patch.UpdateFilePatcher.isExclude($1, $2, $3)) {return;}");
 
-            System.out.println("[+] Update | Com4.aux(): Patch was created.");
+            System.out.println("[+] Update | COM4.aux(): Patch was created.");
 
         } catch (NotFoundException | CannotCompileException e) {
-            System.out.println("[-] Update | Com4.aux(): Patch creation was failed.");
+            System.out.println("[-] Update | COM4.aux(): Patch creation was failed.");
             e.printStackTrace();
             return false;
         }
         return true;
     }
 
-    public static boolean isExclude(Path path, Prn prn, InputStream inputStream) throws IOException {
+    public static boolean isExclude(Path path, PRn prn, InputStream inputStream) throws IOException {
         if (path.getParent().getFileName().toString().equals("mods")){
             String clientName = path.getParent().getParent().getFileName().toString();
             String serverName = Util.ClientDirToName.get(clientName);
