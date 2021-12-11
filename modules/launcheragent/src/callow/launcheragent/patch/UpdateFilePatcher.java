@@ -3,10 +3,10 @@ package callow.launcheragent.patch;
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
 import callow.launcheragent.Util;
+import callow.common.IClassPatcher;
 import javassist.*;
 import javassist.bytecode.Descriptor;
 import launcher.PRn;
-import callow.common.IClassPatcher;
 
 import java.io.EOFException;
 import java.io.IOException;

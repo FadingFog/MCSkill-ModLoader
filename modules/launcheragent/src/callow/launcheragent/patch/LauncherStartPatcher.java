@@ -2,9 +2,9 @@ package callow.launcheragent.patch;
 
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
-import javassist.*;
 import callow.common.IClassPatcher;
 import callow.common.PropertiesFields;
+import javassist.*;
 import launcher.CoM1;
 
 import java.io.IOException;

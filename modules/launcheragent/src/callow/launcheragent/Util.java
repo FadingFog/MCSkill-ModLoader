@@ -24,7 +24,6 @@ public class Util {
     }
 
     public static AUX[] getServersProfiles() {
-        Aux config = aux.getConfig();
         COm4 launcherRequest = new COm4();
         CoM4 response = (CoM4) launcherRequest.request();
 

@@ -44,12 +44,6 @@ public class ModsConfig {
                         this.serverNames.add((String)object);
         }
 
-        public String[] getServerNames() {
-            if (serverNames == null)
-                return new String[0];
-            return (String[]) serverNames.toArray();
-        }
-
         public boolean hasServer(String serverName) {
             return serverNames.contains(serverName);
         }
@@ -202,14 +196,6 @@ public class ModsConfig {
         JSONObject excludeModsJSON = jsonRoot.getJSONObject(excludeBlockName);
         for (String key: excludeModsJSON.keySet())
             excludeMods.add(new StandardInfo(key, excludeModsJSON.get(key)));
-    }
-
-    public IncludeModInfo[] getCustomMods() {
-        return (IncludeModInfo[]) includeMods.toArray();
-    }
-
-    public StandardInfo[] getExcludes() {
-        return (StandardInfo[]) excludeMods.toArray();
     }
 
     public IncludeModInfo[] getIncludesByServerName(String serverName) {

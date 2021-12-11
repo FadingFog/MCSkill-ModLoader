@@ -5,7 +5,6 @@ import callow.common.PropertiesFields;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 
 import static callow.common.Utils.copyResourceFile;
 import static callow.common.Utils.findMCSkillDir;

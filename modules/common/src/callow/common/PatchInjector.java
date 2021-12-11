@@ -26,7 +26,7 @@ public class PatchInjector implements ClassFileTransformer {
                             try {
                                 pool.appendPathList(path.toString() + "\\*");
                             } catch (NotFoundException e) {
-                                System.out.println("[-] Failed to add dir to ClassPool: " + path.toString());
+                                System.out.println("[-] Failed to add dir to ClassPool: " + path);
                             }
                         });
             } catch (Exception e) {
