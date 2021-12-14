@@ -2,30 +2,45 @@ package callow.launcheragent.patch;
 
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
-import callow.common.IClassPatcher;
+import callow.common.IClassPatch;
 import callow.common.PropertiesFields;
 import javassist.*;
 import launcher.CoM1;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
-public class LauncherStartPatcher implements IClassPatcher {
+public class LauncherStartPatch implements IClassPatch {
+
+    @Override
+    public List<String> getListPatchedClasses() {
+        List<String> classes = new ArrayList<>();
+        classes.add("launcher.aux");
+        return classes;
+    }
+
+    @Override
+    public boolean isPatchRequired() {
+        return true;
+    }
+
+    @Override
+    public String getPatchName() {
+        return "Патч на запуск клиента";
+    }
+
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        if (!ctClass.getName().equals("launcher.aux"))
-            return false;
         try {
             // Method start running after program initialization
             CtMethod method = ctClass.getDeclaredMethod("start");
 
             // Insert in begin method our callback method
-            method.insertBefore("callow.launcheragent.patch.LauncherStartPatcher.updateConfigs();");
-
-            System.out.println("[+] Launcher | aux.start(): Patch was created.");
+            method.insertBefore("callow.launcheragent.patch.LauncherStartPatch.updateConfigs();");
 
         } catch (NotFoundException  | CannotCompileException e) {
-            System.out.println("[-] Launcher | aux.start(): Patch creation failed.");
             return false;
         }
         return true;

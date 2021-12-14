@@ -1,12 +1,13 @@
 package callow.clientagent.patch;
 
+import callow.clientagent.IClientPatch;
 import javassist.*;
 import oshi.SystemInfo;
 import oshi.hardware.ComputerSystem;
 import oshi.hardware.Display;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
-import callow.common.IClassPatcher;
+import callow.common.IClassPatch;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,12 +15,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HWIdPatcher implements IClassPatcher {
+public class HWIdPatch implements IClientPatch {
 
     private static final String getHWIdClass = "IIlIlIlIlIlIllIIIIlIIIIIIIIllIIlIlIIIIlllIlIIlIllIIllIllIIIIIlIIlIllIIIIllllIIIIlIllIllIIlIlIIIlIIlIIIllIlllllIlllIllIIIIIlIlIll.IIIIlIIlllIllIIIlIIlIlIIlIIIIIlllllIIIllllIIIIlllIIIllllIlIIIIlllllIIlIllIllIIlIIllIllllIlIlllllIlIlIIllIlIIlIllIIlIIIIlIllIllIl.IIlIlIlIlIlIllIIIIlIIIIIIIIllIIlIlIIIIlllIlIIlIllIIllIllIIIIIlIIlIllIIIIllllIIIIlIllIllIIlIlIIIlIIlIIIllIlllllIlllIllIIIIIlIlIll.llIlIlIlllIIIIIlIlIIlIlIllIlIIIlIIIllIlIlIIIlIIlllIIllIllIllIIIllIIIllIllIlllIIlIlIlIIllIlIIIIllllIlIlIIlIIIlIllIIIlIllIlIllIIlI";
     private static final String getHWIdMethod = "IIlIlIllllIIlllllIlIlllllIIIIlIIIIlllIIlIIllllllIIIIllIlllIIlIIIlIIlIIIIlIllIllllllIIllIIIlIIllIIIlIlIIlIlIlIlIlIIllIlIIlllIIIlI";
@@ -31,21 +34,40 @@ public class HWIdPatcher implements IClassPatcher {
 
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-
-        if (!ctClass.getName().equals(getHWIdClass))
-            return false;
-
         try {
             CtMethod method = ctClass.getDeclaredMethod(getHWIdMethod);
-            method.setBody(String.format("{ java.lang.String[] params = callow.clientagent.patch.HWIdPatcher.getRandomHWId();" +
+            method.setBody(String.format("{ java.lang.String[] params = callow.clientagent.patch.HWIdPatch.getRandomHWId();" +
                     "return %s(params[0]) + \"@\" + %s(params[1]) + \"@\" + %s(params[2]); }", AESEncoderMethod, AESEncoderMethod, AESEncoderMethod ));
             System.out.println("[+] Patcher | HWId patch created.");
         } catch (NotFoundException | CannotCompileException e) {
-            System.out.println("[-] Patcher | Patch creation was failed.");
             e.printStackTrace();
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<String> getListPatchedClasses() {
+        List<String> classes = new ArrayList<>();
+        classes.add(getHWIdClass);
+        return classes;
+    }
+
+    @Override
+    public boolean isPatchRequired() {
+        return false;
+    }
+
+    @Override
+    public String getPatchName() {
+        return "Патч на замену HWId";
+    }
+
+    @Override
+    public List<String> getServersNames() {
+        List<String> servers = new ArrayList<>();
+        servers.add("HiTech 1.12.2");
+        return servers;
     }
 
     public static String getRandomMac()

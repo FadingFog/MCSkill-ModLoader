@@ -1,29 +1,43 @@
 package callow.clientagent.patch;
 
+import callow.clientagent.IClientPatch;
 import javassist.*;
 import launcher.*;
-import callow.common.IClassPatcher;
+import callow.common.IClassPatch;
 
 import java.nio.file.Path;
 import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ClientStartPatcher implements IClassPatcher {
+public class ClientStartPatch implements IClientPatch {
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        if (!ctClass.getName().equals("launcher.AUx"))
-            return false;
-
         try {
             CtMethod method = ctClass.getDeclaredMethod("main");
-            method.setBody("{ Object[] params = callow.clientagent.patch.ClientStartPatcher.modifyRunParams($1); launcher.AUx.aux((launcher.AUX)params[0], (launcher.aUX)params[1]); }");
-
-            System.out.println("[+] Patcher | ClientStart patch created.");
+            method.setBody("{ Object[] params = callow.clientagent.patch.ClientStartPatch.modifyRunParams($1); launcher.AUx.aux((launcher.AUX)params[0], (launcher.aUX)params[1]); }");
         } catch (NotFoundException | CannotCompileException e) {
-            System.out.println("[-] Patcher | ClientStart patch install failed.");
             e.printStackTrace();
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<String> getListPatchedClasses() {
+        List<String> classes = new ArrayList<>();
+        classes.add("launcher.AUx");
+        return classes;
+    }
+
+    @Override
+    public boolean isPatchRequired() {
+        return true;
+    }
+
+    @Override
+    public String getPatchName() {
+        return "Патч на модификацию запуска клиента";
     }
 
     public static Object[] modifyRunParams(final String... array){

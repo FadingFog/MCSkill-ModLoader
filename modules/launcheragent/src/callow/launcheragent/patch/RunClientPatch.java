@@ -6,7 +6,7 @@ import callow.launcheragent.Util;
 import javassist.*;
 import launcher.*;
 import org.json.JSONObject;
-import callow.common.IClassPatcher;
+import callow.common.IClassPatch;
 import callow.common.PropertiesFields;
 
 import java.io.File;
@@ -20,24 +20,35 @@ import java.util.stream.Stream;
 
 import static callow.common.Utils.copyResourceFile;
 
-public class RunClientPatcher implements IClassPatcher {
+public class RunClientPatch implements IClassPatch {
+
+    @Override
+    public List<String> getListPatchedClasses() {
+        List<String> classes = new ArrayList<>();
+        classes.add("launcher.AUx");
+        return classes;
+    }
+
+    @Override
+    public boolean isPatchRequired() {
+        return true;
+    }
+
+    @Override
+    public String getPatchName() {
+        return "Патч на запуск клиента";
+    }
 
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        if (!ctClass.getName().equals("launcher.AUx"))
-            return false;
-
         // Minecraft Client launch method
         // launch
         try {
 
             CtMethod method = ctClass.getDeclaredMethod("launch");
-            method.setBody("return callow.launcheragent.patch.RunClientPatcher.customLaunch($1, $2, $3, $4, $5, $6, $7);");
-
-            System.out.println("[+] ClientLaunch | AUx.launch(): Patch was created.");
+            method.setBody("return callow.launcheragent.patch.RunClientPatch.customLaunch($1, $2, $3, $4, $5, $6, $7);");
 
         } catch (NotFoundException | CannotCompileException e) {
-            System.out.println("[-] ClientLaunch | AUx.launch(): Patch creation was failed.");
             e.printStackTrace();
             return false;
         }
@@ -165,6 +176,7 @@ public class RunClientPatcher implements IClassPatcher {
         environment.put("JAVA_OPTIONS", "");
 
         environment.put("MODS_HANDSHAKE_EXCLUDED", excludesHandshake.toString());
+        environment.put("SERVER_NAME", serverName);
 
         Process process = processBuilder.start();
         COm1.RUNTIME.exit(0);

@@ -1,10 +1,10 @@
 package callow.launcheragent;
 
-import callow.common.IClassPatcher;
-import callow.common.PatchInjector;
-import callow.launcheragent.patch.LauncherStartPatcher;
-import callow.launcheragent.patch.RunClientPatcher;
-import callow.launcheragent.patch.UpdateFilePatcher;
+import callow.common.IClassPatch;
+import callow.common.PatchManager;
+import callow.launcheragent.patch.LauncherStartPatch;
+import callow.launcheragent.patch.RunClientPatch;
+import callow.launcheragent.patch.UpdateFilePatch;
 
 import java.lang.instrument.Instrumentation;
 
@@ -16,8 +16,11 @@ public class Agent {
     public static void premain(String args, Instrumentation instrumentation) {
         loadProperties();
         System.out.println("[+] Agent successfully loaded.");
-        instrumentation.addTransformer(new PatchInjector(
-                new IClassPatcher[] { new LauncherStartPatcher(), new RunClientPatcher(), new UpdateFilePatcher() },
+        instrumentation.addTransformer(new PatchManager(
+                new IClassPatch[] {
+                        new LauncherStartPatch(),
+                        new RunClientPatch(),
+                        new UpdateFilePatch() },
                 false));
     }
 

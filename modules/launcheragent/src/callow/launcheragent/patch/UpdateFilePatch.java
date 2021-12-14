@@ -3,7 +3,7 @@ package callow.launcheragent.patch;
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
 import callow.launcheragent.Util;
-import callow.common.IClassPatcher;
+import callow.common.IClassPatch;
 import javassist.*;
 import javassist.bytecode.Descriptor;
 import launcher.PRn;
@@ -12,15 +12,30 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class UpdateFilePatcher implements IClassPatcher {
+public class UpdateFilePatch implements IClassPatch {
+    @Override
+    public List<String> getListPatchedClasses() {
+        List<String> classes = new ArrayList<>();
+        classes.add("launcher.COM4");
+        return classes;
+    }
+
+    @Override
+    public boolean isPatchRequired() {
+        return true;
+    }
+
+    @Override
+    public String getPatchName() {
+        return "Патч на удаление сторонних модов";
+    }
+
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        // File updating class
-        if (!ctClass.getName().equals("launcher.COM4"))
-            return false;
-
         // Method aux used for every check file
         // final Path path, final Prn prn, final InputStream inputStream
         // aux(final String s, final long n, final long n2)
@@ -36,12 +51,9 @@ public class UpdateFilePatcher implements IClassPatcher {
 
             CtMethod method = ctClass.getMethod("aux",
                     Descriptor.ofMethod(CtPrimitiveType.voidType, paramTypes));
-            method.insertBefore("if (callow.launcheragent.patch.UpdateFilePatcher.isExclude($1, $2, $3)) {return;}");
-
-            System.out.println("[+] Update | COM4.aux(): Patch was created.");
+            method.insertBefore("if (callow.launcheragent.patch.UpdateFilePatch.isExclude($1, $2, $3)) {return;}");
 
         } catch (NotFoundException | CannotCompileException e) {
-            System.out.println("[-] Update | COM4.aux(): Patch creation was failed.");
             e.printStackTrace();
             return false;
         }
