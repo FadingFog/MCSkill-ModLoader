@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.javassist:javassist:3.27.0-GA")
+}
+
+sourceSets {
+    main.java.srcDirs(["src"])
+
+}

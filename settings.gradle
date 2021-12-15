@@ -1,0 +1,4 @@
+include ":modules:starter"
+include ":modules:launcheragent"
+include ":modules:common"
+include ":modules:clientagent"

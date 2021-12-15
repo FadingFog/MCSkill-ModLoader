@@ -2,6 +2,7 @@ package callow.launcheragent;
 
 import callow.common.IClassPatch;
 import callow.common.PatchManager;
+import callow.launcheragent.patch.ClientStartPatch;
 import callow.launcheragent.patch.LauncherStartPatch;
 import callow.launcheragent.patch.RunClientPatch;
 import callow.launcheragent.patch.UpdateFilePatch;
@@ -20,7 +21,9 @@ public class Agent {
                 new IClassPatch[] {
                         new LauncherStartPatch(),
                         new RunClientPatch(),
-                        new UpdateFilePatch() },
+                        new UpdateFilePatch(),
+                        new ClientStartPatch()
+                },
                 false));
     }
 

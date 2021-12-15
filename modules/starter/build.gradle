@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    gradlePluginPortal()
+    mavenCentral()
+}
+
+configurations {
+    jarExport
+    classExport
+    implementation.extendsFrom(jarExport)
+    implementation.extendsFrom(classExport)
+}
+
+dependencies {
+    jarExport project(":modules:launcheragent")
+    classExport project(":modules:common")
+}
+
+sourceSets {
+    main.java.srcDir("src")
+}
+
+jar {
+    manifest.attributes.put("Main-Class", "callow.starter.Launcher")
+    into('').from(configurations.jarExport.files.absoluteFile.get(0))
+    into('').from(configurations.classExport.collect { it.isDirectory() ? it : zipTree(it) })
+}

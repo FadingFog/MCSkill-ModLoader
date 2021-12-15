@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.1'
+}
+
+repositories {
+    gradlePluginPortal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":modules:common")
+
+    implementation fileTree(dir: '../../libs', include: '*.jar')
+
+    implementation("com.github.oshi:oshi-core:5.7.1")
+    implementation("org.javassist:javassist:3.27.0-GA")
+    implementation("org.json:json:20211205")
+}
+
+jar.enabled = false
+jar.dependsOn(shadowJar)
+
+sourceSets {
+    main.java.srcDirs(["src"])
+}
+
+shadowJar {
+    exclude("Launcher.jar")
+    archiveFileName.set("ClientAgent.jar")
+    manifest.attributes.put("Premain-Class", "callow.clientagent.Agent")
+}
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "modloaderShadow"
+}
+tasks.shadowJar.dependsOn tasks.relocateShadowJar

@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    jarExport
+    classExport
+    implementation.extendsFrom(jarExport)
+    implementation.extendsFrom(classExport)
+}
+
+dependencies {
+    implementation fileTree(dir: '../../libs', include: '*.jar')
+
+    implementation("org.javassist:javassist:3.27.0-GA")
+    classExport("org.json:json:20211205")
+
+    classExport project(":modules:common")
+    jarExport project(":modules:clientagent")
+}
+
+sourceSets {
+    main.java.srcDirs(["src"])
+}
+
+jar {
+    manifest.attributes.put("Premain-Class", "callow.launcheragent.Agent")
+    archiveFileName.set("LauncherAgent.jar")
+    into('').from(configurations.jarExport.files.absoluteFile.get(0))
+    into('').from(configurations.classExport.collect { it.isDirectory() ? it : zipTree(it) })
+}

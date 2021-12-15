@@ -1,7 +1,5 @@
 package callow.launcheragent;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import launcher.AUX;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,9 +14,7 @@ import java.util.*;
 public class ModsConfig {
 
     public static class StandardInfo {
-        @NotNull
         private final String filename;
-        @Nullable
         private final List<String> serverNames;
 
         public StandardInfo(String filename) {
@@ -106,11 +102,8 @@ public class ModsConfig {
     private static final String includeBlockName = "includeMods";
     private static final String excludeBlockName = "excludeMods";
 
-    @NotNull
     private List<IncludeModInfo> includeMods;
-    @NotNull
     private List<StandardInfo> excludeMods;
-    @NotNull
     private final File source;
 
     public ModsConfig(File file) throws IOException {

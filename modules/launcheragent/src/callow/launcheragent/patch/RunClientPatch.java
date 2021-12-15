@@ -114,7 +114,7 @@ public class RunClientPatch implements IClassPatch {
         final Path resolveJavaBin = PRN.resolveJavaBin(jvmDir);
         final List<String> list = new ArrayList<>();
         Path clientPath = Paths.get(System.getenv("TEMP")).resolve("ClientAgent.jar");
-        copyResourceFile("ClientAgent.jar", clientPath);
+        copyResourceFile("clientagent.jar", clientPath);
 
         if (PropertiesFields.clientDebug)
             list.addAll(Arrays.asList("cmd", "/c", "start", "cmd", "/k") );
