@@ -27,6 +27,9 @@ sourceSets {
 
 shadowJar {
     exclude("Launcher.jar")
+    dependencies {
+        exclude(dependency("org.javassist:javassist:3.27.0-GA"))
+    }
     archiveFileName.set("ClientAgent.jar")
     manifest.attributes.put("Premain-Class", "callow.clientagent.Agent")
 }

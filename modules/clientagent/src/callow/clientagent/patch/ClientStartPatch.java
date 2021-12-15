@@ -1,4 +1,4 @@
-package callow.launcheragent.patch;
+package callow.clientagent.patch;
 
 import callow.clientagent.IClientPatch;
 import javassist.*;
@@ -10,12 +10,12 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientStartPatch implements IClassPatch {
+public class ClientStartPatch implements IClientPatch {
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
         try {
             CtMethod method = ctClass.getDeclaredMethod("main");
-            method.setBody("{ Object[] params = callow.launcheragent.patch.ClientStartPatch.modifyRunParams($1); launcher.AUx.aux((launcher.AUX)params[0], (launcher.aUX)params[1]); }");
+            method.setBody("{ Object[] params = callow.clientagent.patch.ClientStartPatch.modifyRunParams($1); launcher.AUx.aux((launcher.AUX)params[0], (launcher.aUX)params[1]); }");
         } catch (NotFoundException | CannotCompileException e) {
             e.printStackTrace();
             return false;
