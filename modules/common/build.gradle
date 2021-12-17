@@ -8,6 +8,7 @@ repositories {
 
 dependencies {
     implementation("org.javassist:javassist:3.27.0-GA")
+    implementation("org.json:json:20211205")
 }
 
 sourceSets {

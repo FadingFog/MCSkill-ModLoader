@@ -2,54 +2,31 @@ package callow.clientagent.patch;
 
 import callow.clientagent.IClientPatch;
 import javassist.*;
-import oshi.SystemInfo;
-import oshi.hardware.ComputerSystem;
-import oshi.hardware.Display;
-import oshi.hardware.HWDiskStore;
-import oshi.hardware.HardwareAbstractionLayer;
-import callow.common.IClassPatch;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class HWIdPatch implements IClientPatch {
 
-    private static final String getHWIdClass = "IIlIlIlIlIlIllIIIIlIIIIIIIIllIIlIlIIIIlllIlIIlIllIIllIllIIIIIlIIlIllIIIIllllIIIIlIllIllIIlIlIIIlIIlIIIllIlllllIlllIllIIIIIlIlIll.IIIIlIIlllIllIIIlIIlIlIIlIIIIIlllllIIIllllIIIIlllIIIllllIlIIIIlllllIIlIllIllIIlIIllIllllIlIlllllIlIlIIllIlIIlIllIIlIIIIlIllIllIl.IIlIlIlIlIlIllIIIIlIIIIIIIIllIIlIlIIIIlllIlIIlIllIIllIllIIIIIlIIlIllIIIIllllIIIIlIllIllIIlIlIIIlIIlIIIllIlllllIlllIllIIIIIlIlIll.llIlIlIlllIIIIIlIlIIlIlIllIlIIIlIIIllIlIlIIIlIIlllIIllIllIllIIIllIIIllIllIlllIIlIlIlIIllIlIIIIllllIlIlIIlIIIlIllIIIlIllIlIllIIlI";
-    private static final String getHWIdMethod = "IIlIlIllllIIlllllIlIlllllIIIIlIIIIlllIIlIIllllllIIIIllIlllIIlIIIlIIlIIIIlIllIllllllIIllIIIlIIllIIIlIlIIlIlIlIlIlIIllIlIIlllIIIlI";
-    private static final String AESEncoderMethod = "IIlIlIlIlIlIllIIIIlIIIIIIIIllIIlIlIIIIlllIlIIlIllIIllIllIIIIIlIIlIllIIIIllllIIIIlIllIllIIlIlIIIlIIlIIIllIlllllIlllIllIIIIIlIlIll.IIIIlIIlllIllIIIlIIlIlIIlIIIIIlllllIIIllllIIIIlllIIIllllIlIIIIlllllIIlIllIllIIlIIllIllllIlIlllllIlIlIIllIlIIlIllIIlIIIIlIllIllIl.IlIlllllIIIlIIllIlIlIlllIIlIlIlIIIIllIlIIIllIIlllIIIllIlIlIllIIllIIlllllIIlIIIIIIIIIIlIIlIllIlllIlIIIIlIIllIIlIIlIlIlIIllllIlIIl.llIlIlIlllIIIIIlIlIIlIlIllIlIIIlIIIllIlIlIIIlIIlllIIllIllIllIIIllIIIllIllIlllIIlIlIlIIllIlIIIIllllIlIlIIlIIIlIllIIIlIllIlIllIIlI.IIlIlIllllIIlllllIlIlllllIIIIlIIIIlllIIlIIllllllIIIIllIlllIIlIIIlIIlIIIIlIllIllllllIIllIIIlIIllIIIlIlIIlIlIlIlIlIIllIlIIlllIIIlI";
-
-    private static final String newHWidClass = "com.luffy.mixedmods.common.utils.HWDetails";
-    private static final String newBannedHWidMethod = "getInfo";
-    private static final String newMacHWidMethod = "getMac";
-
-    @Override
-    public boolean patch(ClassPool pool, CtClass ctClass) {
-        try {
-            CtMethod method = ctClass.getDeclaredMethod(getHWIdMethod);
-            method.setBody(String.format("{ java.lang.String[] params = callow.clientagent.patch.HWIdPatch.getRandomHWId();" +
-                    "return %s(params[0]) + \"@\" + %s(params[1]) + \"@\" + %s(params[2]); }", AESEncoderMethod, AESEncoderMethod, AESEncoderMethod ));
-            System.out.println("[+] Patcher | HWId patch created.");
-        } catch (NotFoundException | CannotCompileException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
+    private static final String newHWidClass = "com.luffy.mixedmod.client.utils.HWDetails";
 
     @Override
     public List<String> getListPatchedClasses() {
         List<String> classes = new ArrayList<>();
-        classes.add(getHWIdClass);
+        classes.add(newHWidClass);
+        classes.add("com.luffy.mixedmod.common.utils.HWSerializer");
         return classes;
     }
 
@@ -60,7 +37,7 @@ public class HWIdPatch implements IClientPatch {
 
     @Override
     public String getPatchName() {
-        return "Патч на замену HWId";
+        return "Patch hardware id mod";
     }
 
     @Override
@@ -70,61 +47,58 @@ public class HWIdPatch implements IClientPatch {
         return servers;
     }
 
-    public static String getRandomMac()
-    {
-        SystemInfo systemInfo = new SystemInfo();
-        HardwareAbstractionLayer hardware = systemInfo.getHardware();
-        return randomReplace(hardware.getNetworkIFs().get(0).getMacaddr(), true);
+    @Override
+    public boolean patch(ClassPool pool, CtClass ctClass) {
+        if (ctClass.getName().equals("com.luffy.mixedmod.common.utils.HWSerializer"))
+        {
+            try {
+                CtMethod method = ctClass.getDeclaredMethod("serialize");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.onSerializeOut($_);");
+
+            } catch (NotFoundException | CannotCompileException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else {
+            try {
+                CtMethod method = ctClass.getDeclaredMethod("getMac");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+                method = ctClass.getDeclaredMethod("getBaseboard");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+                method = ctClass.getDeclaredMethod("isVM");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+                method = ctClass.getDeclaredMethod("getHDD");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+                method = ctClass.getDeclaredMethod("getGPU");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+                method = ctClass.getDeclaredMethod("getDiscord");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+                method = ctClass.getDeclaredMethod("getCPU");
+                method.setBody("{return \"Intel(R) Core(TM) i5-2500K CPU @ 3.30GHz | BFEBFBFF000206A7\";}");
+                method = ctClass.getDeclaredMethod("getIP");
+                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+            } catch (NotFoundException | CannotCompileException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
     }
 
-    public static String[] getRandomHWId() {
-        Random random = new Random();
-        SystemInfo systemInfo = new SystemInfo();
-        HardwareAbstractionLayer hardware = systemInfo.getHardware();
-        ComputerSystem systems = hardware.getComputerSystem();
 
-        String[] HWIdStrings = new String[3];
-        StringBuilder currentPartBuilder = new StringBuilder(systems.getBaseboard().getSerialNumber());
 
-        for (Display display : hardware.getDisplays()){
-            byte[] array = display.getEdid();
-            random.nextBytes(array);
-            currentPartBuilder.append(", ").append(Arrays.toString(array));
-        }
 
-        HWIdStrings[0] = currentPartBuilder.toString();
-
-        currentPartBuilder = new StringBuilder(randomReplace(hardware.getProcessor().getProcessorIdentifier().getProcessorID(), true));
-        for (HWDiskStore hWDiskStore : hardware.getDiskStores())
-            currentPartBuilder.append(", ").append(randomReplace(hWDiskStore.getSerial(), true));
-        HWIdStrings[1] = currentPartBuilder.toString();
-
-        currentPartBuilder = new StringBuilder(getIP());
-
-        String absolutePath = Paths.get("").toAbsolutePath().toString();
-        Pattern pattern = Pattern.compile("Users[/\\\\]([^/\\\\]+)[/\\\\]");
-        Matcher matcher = pattern.matcher(absolutePath);
-        System.out.println(absolutePath);
-        if (matcher.find()) {
-            absolutePath = matcher.replaceFirst("Users/" + randomReplace(matcher.group(1), false) + "/");
-        }
-        currentPartBuilder.append(", ").append(Paths.get(absolutePath).toAbsolutePath());
-
-        currentPartBuilder.append(", mac: ").append(getRandomMac());
-        HWIdStrings[2] = currentPartBuilder.toString();
-
-        System.out.println("[+] Sending random HWId: ");
-        for (String part: HWIdStrings)
-            System.out.println(part);
-
-        return HWIdStrings;
+    public static byte[] onSerializeOut(byte[] result) {
+        System.out.println(result);
+        return result;
     }
 
     public static String randomReplace(String string, boolean isHex) {
         byte[] encoded = string.getBytes(StandardCharsets.UTF_8);
         final int[][] randomRangesHex = { {48, 57}, {65, 70}, {97, 102} };
         final int[][] randomRanges = { {48, 57}, {65, 90}, {97, 122} };
-        Random random = new Random();
+        Random random = new Random(getIdentifier());
         StringBuilder randomBuilder = new StringBuilder();
         for (byte b: encoded) {
             int ch = b & 0xFF;
@@ -140,17 +114,36 @@ public class HWIdPatch implements IClientPatch {
         return randomBuilder.toString();
     }
 
+    public static String replaceDigits(String content) {
+        Random random = new Random(getIdentifier());
+        StringBuilder builder = new StringBuilder();
+        for (byte ch: content.getBytes(StandardCharsets.UTF_8)) {
+            char toAdd = (char) ch;
+            if (ch >= 49 && ch <= 57) {
+                toAdd = (char) (49 + random.nextInt(8));
+            }
+            builder.append(toAdd);
+        }
+        return builder.toString();
+    }
+
+    public static long getIdentifier() {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.update(System.getenv("PLAYER_NAME").getBytes(StandardCharsets.UTF_8));
+            ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+            byte[] digest = messageDigest.digest();
+            for (int i = 0; i < 8; i++)
+                buffer.put((byte) (digest[i] - digest[i + 8]));
+            buffer.flip();
+            return buffer.getLong();
+        } catch (NoSuchAlgorithmException e) {
+            return 0;
+        }
+    }
+
     public static String getIP() {
         String str1 = null;
-        String str2 = null;
-        try {
-            URL uRL = new URL("http://icanhazip.com/");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uRL.openStream()));
-            String str;
-            if ((str = bufferedReader.readLine()) != null)
-                str2 = str;
-            bufferedReader.close();
-        } catch (IOException ignored) {}
         try {
             URL uRL = new URL("http://checkip.amazonaws.com/");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uRL.openStream()));
@@ -159,6 +152,6 @@ public class HWIdPatch implements IClientPatch {
                 str1 = str;
             bufferedReader.close();
         } catch (IOException ignored) {}
-        return "IPv4: " + str1 + ", IPv6: " + str2;
+        return  str1;
     }
 }

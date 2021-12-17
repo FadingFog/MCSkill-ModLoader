@@ -37,7 +37,7 @@ public class ClientStartPatch implements IClientPatch {
 
     @Override
     public String getPatchName() {
-        return "Патч на модификацию запуска клиента";
+        return "Patch for client start modification";
     }
 
     public static Object[] modifyRunParams(final String... array){

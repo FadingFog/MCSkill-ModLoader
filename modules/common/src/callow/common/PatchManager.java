@@ -63,14 +63,20 @@ public class PatchManager implements ClassFileTransformer {
         }
 
         for (IClassPatch patch: patchStatuses.keySet()) {
-            if (isClassValidForPatch(className, patch) && patch.patch(pool, currentClass)) {
-                try {
-                    classBytes = currentClass.toBytecode();
-                    System.out.println("[+] Patch injected: " + patch.getClass().getSimpleName());
-                    patchStatuses.get(patch).put(className, true);
-                } catch (CannotCompileException | IOException e) {
-                    e.printStackTrace();
-                }
+            if (isClassValidForPatch(className, patch)) {
+                if (patch.patch(pool, currentClass))
+                    try {
+                        classBytes = currentClass.toBytecode();
+                        System.out.println("[+] Patch injected: " + patch.getClass().getSimpleName());
+                        patchStatuses.get(patch).put(className, true);
+                    } catch (CannotCompileException | IOException e) {
+                        JOptionPane.showMessageDialog(null,  "Applying '" + patch.getPatchName() + "' ends with error.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                else
+                    JOptionPane.showMessageDialog(null, "Applying '" + patch.getPatchName() + "' ends with error.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
         return classBytes;

@@ -12,10 +12,11 @@ dependencies {
     implementation project(":modules:common")
 
     implementation fileTree(dir: '../../libs', include: '*.jar')
+    implementation fileTree(dir: 'C:\\Users\\strog\\AppData\\Roaming\\McSkill\\updates\\Hitech1122\\mods', include: 'MixedMod-1.0.8-client.jar')
 
-    implementation("com.github.oshi:oshi-core:5.7.1")
     implementation("org.javassist:javassist:3.27.0-GA")
     implementation("org.json:json:20211205")
+    implementation("org.reflections:reflections:0.10.2")
 }
 
 jar.enabled = false
@@ -27,17 +28,20 @@ sourceSets {
 
 shadowJar {
     exclude("Launcher.jar")
-    dependencies {
-        exclude(dependency("org.javassist:javassist:3.27.0-GA"))
-    }
+    exclude("MixedMod-1.0.8-client.jar")
+    relocate 'org.slf4j', 'shadowCC.org.slf4j'
+    relocate 'org.reflections', 'shadowCC.org.reflections'
+    relocate 'org.json', 'shadowCC.org.json'
+    relocate 'javax.annotation', 'shadowCC.javax.annotation'
+
     archiveFileName.set("ClientAgent.jar")
     manifest.attributes.put("Premain-Class", "callow.clientagent.Agent")
 }
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+//import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 
-task relocateShadowJar(type: ConfigureShadowRelocation) {
-    target = tasks.shadowJar
-    prefix = "modloaderShadow"
-}
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
+//task relocateShadowJar(type: ConfigureShadowRelocation) {
+//    target = tasks.shadowJar
+//    prefix = "modloaderShadow"
+//}
+//tasks.shadowJar.dependsOn tasks.relocateShadowJar

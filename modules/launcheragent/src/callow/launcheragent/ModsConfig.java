@@ -1,5 +1,6 @@
 package callow.launcheragent;
 
+import callow.common.Utils;
 import launcher.AUX;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -115,7 +116,7 @@ public class ModsConfig {
         boolean hasChanges = false;
         JSONObject jsonRoot;
         try {
-            String fileContent = Util.readFile(source);
+            String fileContent = Utils.readFile(source);
             jsonRoot = new JSONObject(fileContent.isEmpty() ? "{}" : fileContent);
         } catch (FileNotFoundException e) {
             System.out.println("[+] Created new json config file: " + source.getAbsolutePath());

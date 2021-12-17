@@ -1,10 +1,8 @@
 package callow.clientagent;
 
-import callow.clientagent.patch.ClassesCheckPatch;
-import callow.clientagent.patch.ClientStartPatch;
-import callow.clientagent.patch.HWIdPatch;
-import callow.clientagent.patch.HandshakePatch;
+import callow.clientagent.patch.*;
 
+import javax.swing.*;
 import java.lang.instrument.Instrumentation;
 
 public class Agent {
@@ -21,5 +19,7 @@ public class Agent {
                 System.getenv("SERVER_NAME")));
     }
 
-    public static void main(String[] args) { }
+    public static void main(String[] args)  {
+
+    }
 }

@@ -8,14 +8,6 @@ import java.util.*;
 public class Util {
 
     public static Map<String, String> ClientDirToName;
-    public static String readFile(File file) throws FileNotFoundException {
-        Scanner myReader = new Scanner(file);
-        StringBuilder builder = new StringBuilder();
-        while (myReader.hasNextLine())
-            builder.append(myReader.nextLine());
-        myReader.close();
-        return builder.toString();
-    }
 
     public static void writeFile(File file, String data) throws IOException {
         Writer writer = new FileWriter(file);

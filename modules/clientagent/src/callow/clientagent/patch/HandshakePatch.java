@@ -5,6 +5,7 @@ import javassist.*;
 import org.json.JSONObject;
 import callow.common.IClassPatch;
 
+import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +31,6 @@ public class HandshakePatch implements IClientPatch {
                     "if ($2.getClass().equals(%s.fml.common.network.handshake.FMLHandshakeMessage.ModList.class)) " +
                             "{ callow.clientagent.patch.HandshakePatch.sendHandshakeModList(%s.fml.common.Loader.instance().getActiveModList(), $3, \"%s\"); return; }",
                     prefix, prefix, prefix));
-
         } catch (NotFoundException | CannotCompileException e) {
             e.printStackTrace();
             return false;
@@ -58,7 +58,7 @@ public class HandshakePatch implements IClientPatch {
 
     @Override
     public String getPatchName() {
-        return "Патч на подмену хендшейка";
+        return "Patch for replacing handshake";
     }
 
     public static void sendHandshakeModList(List<Object> modContainers, Object targetBuffer, String prefix) {

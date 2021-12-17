@@ -1,5 +1,6 @@
 package callow.launcheragent.patch;
 
+import callow.common.FileClasses;
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
 import callow.launcheragent.Util;
@@ -71,6 +72,9 @@ public class UpdateFilePatch implements IClassPatch {
 
             if (Arrays.stream(config.getExcludesByServerName(serverName)).anyMatch(x -> x.getFilename().equals(modName)))
             {
+                if (!FileClasses.has(path.toAbsolutePath().toString()))
+                    return false;
+
                 System.out.println("[+] Excluded file " + modName + " download prevented");
                 byte[] buffer = new byte[2048];
                 int n = 0;

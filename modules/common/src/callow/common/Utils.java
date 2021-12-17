@@ -1,11 +1,19 @@
 package callow.common;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.*;
-import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Vector;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class Utils {
     public static void copyResourceFile(String resource, Path destination) throws IOException {
@@ -37,6 +45,39 @@ public class Utils {
         if (!Files.isDirectory(launcher))
             return null;
         return launcher;
+    }
+
+    public static String getFileHash(String pathToFile) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        try
+        {
+            InputStream is = Files.newInputStream(Paths.get(pathToFile));
+            DigestInputStream dis = new DigestInputStream(is, md);
+            dis.read();
+            byte[] digest = md.digest();
+            return toHex(digest);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static String toHex(byte[] bytes) {
+        BigInteger bi = new BigInteger(1, bytes);
+        return String.format("%0" + (bytes.length << 1) + "X", bi);
+    }
+
+    public static String readFile(File file) throws FileNotFoundException {
+        Scanner myReader = new Scanner(file);
+        StringBuilder builder = new StringBuilder();
+        while (myReader.hasNextLine())
+            builder.append(myReader.nextLine());
+        myReader.close();
+        return builder.toString();
     }
 
 //    HashSet<String> llIlllllIIlllll = (HashSet<String>)Stream.concat(getClasses().stream(), getRuntimeClasses().stream()).sorted().collect(Collectors.toCollection(java.util.LinkedHashSet::new));

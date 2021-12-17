@@ -1,5 +1,6 @@
 package callow.launcheragent.patch;
 
+import callow.common.FileClasses;
 import callow.launcheragent.Agent;
 import callow.launcheragent.ModsConfig;
 import callow.launcheragent.Util;
@@ -59,12 +60,8 @@ public class RunClientPatch implements IClassPatch {
                                        final com8 clientHDir, final com8 profile, final aUX serverParams,
                                        final boolean isDebug) throws IOException
     {
-        try {
-            Agent.modsConfig = new ModsConfig(PropertiesFields.modJSONConfig.toFile());
-        } catch (IOException e) {
-            System.out.println("[-] Loading mods config file was failed.");
-            e.printStackTrace();
-        }
+        List<String> excludedClasses = new ArrayList<>();
+        List<String> includedClasses = new ArrayList<>();
 
         PropertiesFields.loadProperties();
 
@@ -85,8 +82,11 @@ public class RunClientPatch implements IClassPatch {
             if (!modCustomPath.toFile().exists())
                 continue;
             try {
-                if (modClientPath.toFile().exists())
+                if (modClientPath.toFile().exists()){
+                    excludedClasses.addAll(FileClasses.get(modClientPath.toAbsolutePath().toString()));
                     Files.delete(modClientPath);
+                }
+                includedClasses.addAll(FileClasses.get(modCustomPath.toAbsolutePath().toString()));
                 Files.copy(modCustomPath, modClientPath);
             } catch (IOException e) { continue; }
             if (!modInfo.inHandshake())
@@ -96,9 +96,12 @@ public class RunClientPatch implements IClassPatch {
         for (ModsConfig.StandardInfo modInfo : config.getExcludesByServerName(serverName))
         {
             Path modClientPath = clientMods.resolve(modInfo.getFilename());
-            if (modClientPath.toFile().exists())
+            if (modClientPath.toFile().exists()){
+                excludedClasses.addAll(FileClasses.get(modClientPath.toAbsolutePath().toString()));
                 Files.delete(modClientPath);
+            }
         }
+
 
         // Copied from decompiled code
         final Path tempFile = Files.createTempFile("ClientLauncherParams", ".bin");
@@ -116,6 +119,8 @@ public class RunClientPatch implements IClassPatch {
         Path clientPath = Paths.get(System.getenv("TEMP")).resolve("ClientAgent.jar");
         copyResourceFile("clientagent.jar", clientPath);
 
+        includedClasses.addAll(FileClasses.get(clientPath.toAbsolutePath().toString()));
+        FileClasses.save();
         if (PropertiesFields.clientDebug)
             list.addAll(Arrays.asList("cmd", "/c", "start", "cmd", "/k") );
 
@@ -177,6 +182,11 @@ public class RunClientPatch implements IClassPatch {
 
         environment.put("MODS_HANDSHAKE_EXCLUDED", excludesHandshake.toString());
         environment.put("SERVER_NAME", serverName);
+        environment.put("PLAYER_NAME", serverParams.pp.username);
+        JSONObject object = new JSONObject();
+        object.put("excluded", excludedClasses);
+        object.put("included", includedClasses);
+        environment.put("CLASSES_INFO", object.toString());
 
         Process process = processBuilder.start();
         COm1.RUNTIME.exit(0);
