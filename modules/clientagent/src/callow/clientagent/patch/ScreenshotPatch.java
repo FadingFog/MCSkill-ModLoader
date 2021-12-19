@@ -19,6 +19,8 @@ public class ScreenshotPatch implements IClientPatch {
     public List<String> getListPatchedClasses() {
         List<String> classes = new ArrayList<>();
         classes.add("com.luffy.mixedmod.client.utils.ClientUtils");
+        classes.add("com.net.eahraeh.Screener.Events");
+
         return classes;
     }
 
@@ -29,6 +31,8 @@ public class ScreenshotPatch implements IClientPatch {
         ServerInfo htc170Info = new ServerInfo("HiTechCraft", new HashMap<>());
         htc170Info.hashDependencies.put("mods/MixedMod-1.1-client-cut-final.jar",
                 "657439eb8c3979aaca030ac2d4e5a883");
+        htc170Info.hashDependencies.put("mods/Helper.jar",
+                "185e669f5ec12433217c90849342fccd");
         servers.add(htc170Info);
 
         return servers;
