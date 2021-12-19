@@ -15,6 +15,11 @@ import java.util.List;
 public class LauncherStartPatch implements IClassPatch {
 
     @Override
+    public String getPatchName() {
+        return "Патч на запуск клиента";
+    }
+
+    @Override
     public List<String> getListPatchedClasses() {
         List<String> classes = new ArrayList<>();
         classes.add("launcher.aux");
@@ -24,11 +29,6 @@ public class LauncherStartPatch implements IClassPatch {
     @Override
     public boolean isPatchRequired() {
         return true;
-    }
-
-    @Override
-    public String getPatchName() {
-        return "Патч на запуск клиента";
     }
 
     @Override

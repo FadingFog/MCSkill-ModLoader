@@ -8,10 +8,19 @@ import java.util.List;
 
 public interface IClassPatch {
 
+    /**
+     * Patch apply mode, using to detect unused modes
+     */
     enum PatchClassMode {
         ANY,
         ALL
     }
+
+    /**
+     * @return Name of a patch
+     */
+    String getPatchName();
+
     /**
      * @return List of class names to catch in patch
      */
@@ -30,8 +39,6 @@ public interface IClassPatch {
     default PatchClassMode getPatchMode() {
         return PatchClassMode.ALL;
     }
-
-    String getPatchName();
 
     /**
      * @param pool Pool of classes

@@ -3,7 +3,6 @@ package callow.clientagent.patch;
 import callow.clientagent.IClientPatch;
 import javassist.*;
 import launcher.*;
-import callow.common.IClassPatch;
 
 import java.nio.file.Path;
 import java.security.interfaces.RSAPublicKey;
@@ -12,6 +11,18 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClientStartPatch implements IClientPatch {
+
+    @Override
+    public String getPatchName() {
+        return "Patch for client start modification";
+    }
+
+    @Override
+    public List<String> getListPatchedClasses() {
+        List<String> classes = new ArrayList<>();
+        classes.add("launcher.AUx");
+        return classes;
+    }
 
     @Override
     public List<ServerInfo> getServersInfo() {
@@ -26,6 +37,11 @@ public class ClientStartPatch implements IClientPatch {
     }
 
     @Override
+    public boolean isPatchRequired() {
+        return true;
+    }
+
+    @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
         try {
             CtMethod method = ctClass.getDeclaredMethod("main");
@@ -35,23 +51,6 @@ public class ClientStartPatch implements IClientPatch {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public List<String> getListPatchedClasses() {
-        List<String> classes = new ArrayList<>();
-        classes.add("launcher.AUx");
-        return classes;
-    }
-
-    @Override
-    public boolean isPatchRequired() {
-        return true;
-    }
-
-    @Override
-    public String getPatchName() {
-        return "Patch for client start modification";
     }
 
     public static Object[] modifyRunParams(final String... array){

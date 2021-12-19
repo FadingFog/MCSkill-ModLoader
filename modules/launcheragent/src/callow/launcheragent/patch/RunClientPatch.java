@@ -24,6 +24,11 @@ import static callow.common.Utils.copyResourceFile;
 public class RunClientPatch implements IClassPatch {
 
     @Override
+    public String getPatchName() {
+        return "Патч на запуск клиента";
+    }
+
+    @Override
     public List<String> getListPatchedClasses() {
         List<String> classes = new ArrayList<>();
         classes.add("launcher.AUx");
@@ -35,10 +40,6 @@ public class RunClientPatch implements IClassPatch {
         return true;
     }
 
-    @Override
-    public String getPatchName() {
-        return "Патч на запуск клиента";
-    }
 
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {

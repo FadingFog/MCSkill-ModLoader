@@ -3,9 +3,7 @@ package callow.clientagent.patch;
 import callow.clientagent.IClientPatch;
 import javassist.*;
 import org.json.JSONObject;
-import callow.common.IClassPatch;
 
-import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,25 +13,8 @@ import java.util.*;
 public class HandshakePatch implements IClientPatch {
 
     @Override
-    public boolean patch(ClassPool pool, CtClass ctClass) {
-        String prefix;
-        if (ctClass.getName().equals("cpw.mods.fml.common.network.handshake.FMLHandshakeCodec"))
-            prefix = "cpw.mods";
-        else
-            prefix = "net.minecraftforge";
-
-        try {
-            CtMethod method = ctClass.getDeclaredMethod("encodeInto");
-
-            method.insertBefore(String.format(
-                    "if ($2.getClass().equals(%s.fml.common.network.handshake.FMLHandshakeMessage.ModList.class)) " +
-                            "{ callow.clientagent.patch.HandshakePatch.sendHandshakeModList(%s.fml.common.Loader.instance().getActiveModList(), $3, \"%s\"); return; }",
-                    prefix, prefix, prefix));
-        } catch (NotFoundException | CannotCompileException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+    public String getPatchName() {
+        return "Patch for replacing handshake";
     }
 
     @Override
@@ -55,8 +36,25 @@ public class HandshakePatch implements IClientPatch {
     }
 
     @Override
-    public String getPatchName() {
-        return "Patch for replacing handshake";
+    public boolean patch(ClassPool pool, CtClass ctClass) {
+        String prefix;
+        if (ctClass.getName().equals("cpw.mods.fml.common.network.handshake.FMLHandshakeCodec"))
+            prefix = "cpw.mods";
+        else
+            prefix = "net.minecraftforge";
+
+        try {
+            CtMethod method = ctClass.getDeclaredMethod("encodeInto");
+
+            method.insertBefore(String.format(
+                    "if ($2.getClass().equals(%s.fml.common.network.handshake.FMLHandshakeMessage.ModList.class)) " +
+                            "{ callow.clientagent.patch.HandshakePatch.sendHandshakeModList(%s.fml.common.Loader.instance().getActiveModList(), $3, \"%s\"); return; }",
+                    prefix, prefix, prefix));
+        } catch (NotFoundException | CannotCompileException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public static void sendHandshakeModList(List<Object> modContainers, Object targetBuffer, String prefix) {

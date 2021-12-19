@@ -3,9 +3,6 @@ package callow.clientagent.patch;
 import callow.clientagent.IClientPatch;
 import javassist.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,24 +16,17 @@ import java.util.List;
 
 public class HWIdPatch implements IClientPatch {
 
-    private static final String newHWidClass = "com.luffy.mixedmod.client.utils.HWDetails";
+    @Override
+    public String getPatchName() {
+        return "Patch hardware id mod";
+    }
 
     @Override
     public List<String> getListPatchedClasses() {
         List<String> classes = new ArrayList<>();
-        classes.add(newHWidClass);
+        classes.add("com.luffy.mixedmod.client.utils.HWDetails");
         classes.add("com.luffy.mixedmod.common.utils.HWSerializer");
         return classes;
-    }
-
-    @Override
-    public boolean isPatchRequired() {
-        return false;
-    }
-
-    @Override
-    public String getPatchName() {
-        return "Patch hardware id mod";
     }
 
     @Override
@@ -49,6 +39,11 @@ public class HWIdPatch implements IClientPatch {
         servers.add(htc112);
 
         return servers;
+    }
+
+    @Override
+    public boolean isPatchRequired() {
+        return false;
     }
 
     @Override

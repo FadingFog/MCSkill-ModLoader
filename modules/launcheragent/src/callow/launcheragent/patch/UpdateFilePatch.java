@@ -18,6 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class UpdateFilePatch implements IClassPatch {
+
+    @Override
+    public String getPatchName() {
+        return "Патч на удаление сторонних модов";
+    }
+
     @Override
     public List<String> getListPatchedClasses() {
         List<String> classes = new ArrayList<>();
@@ -28,11 +34,6 @@ public class UpdateFilePatch implements IClassPatch {
     @Override
     public boolean isPatchRequired() {
         return true;
-    }
-
-    @Override
-    public String getPatchName() {
-        return "Патч на удаление сторонних модов";
     }
 
     @Override

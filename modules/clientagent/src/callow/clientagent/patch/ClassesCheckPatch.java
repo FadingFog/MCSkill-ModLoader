@@ -34,24 +34,6 @@ public class ClassesCheckPatch implements IClientPatch {
     private static HashSet<String> cachedClasses;
 
     @Override
-    public List<String> getListPatchedClasses() {
-        List<String> classes = new ArrayList<>();
-        classes.add("ic2.core.network.ThreadIC2");
-        classes.add("com.luffy.mixedmod.client.utils.DetectorUtil");
-        return classes;
-    }
-
-    @Override
-    public boolean isPatchRequired() {
-        return true;
-    }
-
-    @Override
-    public PatchClassMode getPatchMode() {
-        return PatchClassMode.ANY;
-    }
-
-    @Override
     public String getPatchName() {
         return "Patch for replacing class composition";
     }
@@ -71,6 +53,24 @@ public class ClassesCheckPatch implements IClientPatch {
         servers.add(htc170Info);
 
         return servers;
+    }
+
+    @Override
+    public List<String> getListPatchedClasses() {
+        List<String> classes = new ArrayList<>();
+        classes.add("ic2.core.network.ThreadIC2");
+        classes.add("com.luffy.mixedmod.client.utils.DetectorUtil");
+        return classes;
+    }
+
+    @Override
+    public boolean isPatchRequired() {
+        return true;
+    }
+
+    @Override
+    public PatchClassMode getPatchMode() {
+        return PatchClassMode.ANY;
     }
 
     @Override
@@ -98,6 +98,8 @@ public class ClassesCheckPatch implements IClientPatch {
         return true;
     }
 
+
+    // For HTC1.7.10
     public static HashSet<String> onGetRuntimeClasses() {
         return new HashSet<>();
     }
@@ -134,6 +136,7 @@ public class ClassesCheckPatch implements IClientPatch {
         }
     }
 
+    // For HTC 1.12.2
     public static void onSendClasses(Object threadIC2) {
         updateEnvironmentData();
 
@@ -157,6 +160,8 @@ public class ClassesCheckPatch implements IClientPatch {
             anInt.setAccessible(true);
             final int id = anInt.getInt(threadIC2);
             final Object wrapper = NetworkManagerDepClass.getField("wrapper").get(null);
+
+            @SuppressWarnings("unchecked")
             final HashSet<String> removeSet = (HashSet<String>)NetworkManagerDepClass.getField("HASH_SET").get(null);
 
             HashSet<String> classes;
@@ -178,7 +183,7 @@ public class ClassesCheckPatch implements IClientPatch {
             writeDataToFile(nameBuilder.toString().getBytes(StandardCharsets.UTF_8),
                     new File("C:\\Users\\strog\\Desktop\\Hack templates\\MCSkill\\IC 1.12.2 Patch\\data_formated.txt"));
 
-            byte[][] byteData = (byte[][]) divMethod.invoke(threadIC2, nameBuilder.toString().getBytes(StandardCharsets.UTF_8));
+            byte[][] byteData = (byte[][]) divMethod.invoke(threadIC2, (Object) nameBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
             StringBuilder removeBuilder = new StringBuilder();
             removeSet.forEach(className -> removeBuilder.append(className).append("\n"));
@@ -203,18 +208,6 @@ public class ClassesCheckPatch implements IClientPatch {
         }
     }
 
-    public static void onChPacket(byte[] data)
-    {
-        File file = new File("C:\\Users\\strog\\Desktop\\Hack templates\\MCSkill\\IC 1.12.2 Patch\\data.txt");
-        writeDataToFile(data, file);
-    }
-
-    public static void onReplyPacket(byte[] data)
-    {
-        File file = new File("C:\\Users\\strog\\Desktop\\Hack templates\\MCSkill\\IC 1.12.2 Patch\\hashes.txt");
-        writeDataToFile(data, file);
-    }
-
     public static HashSet<String> getAllClasses() {
         return Stream.concat(Objects.requireNonNull(getRuntimeClasses()).stream(), getStaticClasses().stream()).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -222,10 +215,13 @@ public class ClassesCheckPatch implements IClientPatch {
     private static Method findByName(Class<?> clazz, String name) {
         return Arrays.stream(clazz.getMethods()).filter((method) -> method.getName().equals(name)).findFirst().orElse(null);
     }
+
     private static HashSet<String> getRuntimeClasses() {
         try {
             Field classField = ClassLoader.class.getDeclaredField("classes");
             classField.setAccessible(true);
+
+            @SuppressWarnings("unchecked")
             Vector<Class> vector = (Vector<Class>) classField.get(ClasspathHelper.contextClassLoader());
             return vector.stream().map(Class::getName)
                     .filter(name -> !name.contains("$"))

@@ -4,12 +4,9 @@ import callow.clientagent.IClientPatch;
 import javassist.*;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class ScreenshotPatch implements IClientPatch {
 
@@ -26,17 +23,6 @@ public class ScreenshotPatch implements IClientPatch {
     }
 
     @Override
-    public boolean isPatchRequired() {
-        return true;
-    }
-
-    @Override
-    public PatchClassMode getPatchMode() {
-        return PatchClassMode.ANY;
-    }
-
-
-    @Override
     public List<ServerInfo> getServersInfo() {
         List<ServerInfo> servers = new ArrayList<>();
 
@@ -47,6 +33,17 @@ public class ScreenshotPatch implements IClientPatch {
 
         return servers;
     }
+
+    @Override
+    public boolean isPatchRequired() {
+        return true;
+    }
+
+    @Override
+    public PatchClassMode getPatchMode() {
+        return PatchClassMode.ANY;
+    }
+
 
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
