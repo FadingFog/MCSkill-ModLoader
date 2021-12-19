@@ -1,19 +1,12 @@
 package callow.common;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.*;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 public class Utils {
     public static void copyResourceFile(String resource, Path destination) throws IOException {
@@ -47,28 +40,45 @@ public class Utils {
         return launcher;
     }
 
-    public static String getFileHash(String pathToFile) {
-        MessageDigest md;
+    public static byte[] createChecksum(String filename) throws IOException {
+        InputStream fis = new FileInputStream(filename);
+
+        byte[] buffer = new byte[1024];
+        MessageDigest complete;
         try {
-            md = MessageDigest.getInstance("MD5");
+            complete = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
             return null;
         }
-        try
-        {
-            InputStream is = Files.newInputStream(Paths.get(pathToFile));
-            DigestInputStream dis = new DigestInputStream(is, md);
-            dis.read();
-            byte[] digest = md.digest();
-            return toHex(digest);
+
+        int numRead;
+
+        do {
+            numRead = fis.read(buffer);
+            if (numRead > 0) {
+                complete.update(buffer, 0, numRead);
+            }
+        } while (numRead != -1);
+
+        fis.close();
+        return complete.digest();
+    }
+
+    public static String getMD5Checksum(String filename) {
+        try {
+            byte[] b = createChecksum(filename);
+            if (b == null)
+                return null;
+
+            StringBuilder result = new StringBuilder();
+            for (byte value : b) {
+                result.append(Integer.toString((value & 0xff) + 0x100, 16).substring(1));
+            }
+            return result.toString();
         } catch (IOException e) {
             return null;
         }
-    }
-
-    public static String toHex(byte[] bytes) {
-        BigInteger bi = new BigInteger(1, bytes);
-        return String.format("%0" + (bytes.length << 1) + "X", bi);
     }
 
     public static String readFile(File file) throws FileNotFoundException {

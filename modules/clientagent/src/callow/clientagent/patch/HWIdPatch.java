@@ -14,9 +14,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class HWIdPatch implements IClientPatch {
 
@@ -41,9 +40,14 @@ public class HWIdPatch implements IClientPatch {
     }
 
     @Override
-    public List<String> getServersNames() {
-        List<String> servers = new ArrayList<>();
-        servers.add("HiTech 1.12.2");
+    public List<ServerInfo> getServersInfo() {
+        List<ServerInfo> servers = new ArrayList<>();
+
+        ServerInfo htc112 = new ServerInfo("HiTech 1.12.2", new HashMap<>());
+        htc112.hashDependencies.put("mods/MixedMod-1.0.8-client.jar",
+                "c92d841bf16af56c78bd23f43e695781");
+        servers.add(htc112);
+
         return servers;
     }
 
@@ -86,11 +90,8 @@ public class HWIdPatch implements IClientPatch {
         return true;
     }
 
-
-
-
     public static byte[] onSerializeOut(byte[] result) {
-        System.out.println(result);
+        System.out.println(Arrays.toString(result));
         return result;
     }
 

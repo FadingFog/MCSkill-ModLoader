@@ -9,7 +9,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import static callow.common.Utils.getFileHash;
+import static callow.common.Utils.getMD5Checksum;
 import static callow.common.Utils.readFile;
 
 public class FileClasses {
@@ -51,7 +51,7 @@ public class FileClasses {
                 result.add(jarEntry.getName().replace(".class", "").replace('/', '.'));
         }
 
-        entries.put(filepath, new FileEntry(getFileHash(filepath), result));
+        entries.put(filepath, new FileEntry(getMD5Checksum(filepath), result));
         return result;
     }
 
@@ -62,7 +62,7 @@ public class FileClasses {
             return false;
 
         String fileHash = entries.get(filepath).hash;
-        return Objects.equals(fileHash, getFileHash(filepath));
+        return Objects.equals(fileHash, getMD5Checksum(filepath));
     }
 
     private static void load() {

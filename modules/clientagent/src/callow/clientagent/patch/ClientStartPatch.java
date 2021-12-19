@@ -8,9 +8,23 @@ import callow.common.IClassPatch;
 import java.nio.file.Path;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ClientStartPatch implements IClientPatch {
+
+    @Override
+    public List<ServerInfo> getServersInfo() {
+        List<ServerInfo> servers = new ArrayList<>();
+
+        ServerInfo info = new ServerInfo("*", new HashMap<>());
+        info.hashDependencies.put("../Launcher.jar",
+                "b5ecba726daec152af9bbd2c7bce34b1");
+        servers.add(info);
+
+        return servers;
+    }
+
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
         try {

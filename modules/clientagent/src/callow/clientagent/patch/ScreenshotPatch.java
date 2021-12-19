@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -34,10 +35,16 @@ public class ScreenshotPatch implements IClientPatch {
         return PatchClassMode.ANY;
     }
 
+
     @Override
-    public List<String> getServersNames() {
-        List<String> servers = new ArrayList<>();
-        servers.add("HiTechCraft");
+    public List<ServerInfo> getServersInfo() {
+        List<ServerInfo> servers = new ArrayList<>();
+
+        ServerInfo htc170Info = new ServerInfo("HiTechCraft", new HashMap<>());
+        htc170Info.hashDependencies.put("mods/MixedMod-1.1-client-cut-final.jar",
+                "657439eb8c3979aaca030ac2d4e5a883");
+        servers.add(htc170Info);
+
         return servers;
     }
 

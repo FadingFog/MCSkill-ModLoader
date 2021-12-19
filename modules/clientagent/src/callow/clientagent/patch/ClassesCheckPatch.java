@@ -57,10 +57,19 @@ public class ClassesCheckPatch implements IClientPatch {
     }
 
     @Override
-    public List<String> getServersNames() {
-        List<String> servers = new ArrayList<>();
-        servers.add("HiTech 1.12.2");
-        servers.add("HiTechCraft");
+    public List<ServerInfo> getServersInfo() {
+        List<ServerInfo> servers = new ArrayList<>();
+
+        ServerInfo htc112Info = new ServerInfo("HiTech 1.12.2", new HashMap<>());
+        htc112Info.hashDependencies.put("mods/industrialcraft-2-2.8.187-ex112-client.jar",
+                "45184c2d91ecfa8ef2e9474005bb60a3");
+        servers.add(htc112Info);
+
+        ServerInfo htc170Info = new ServerInfo("HiTechCraft", new HashMap<>());
+        htc170Info.hashDependencies.put("mods/MixedMod-1.1-client-cut-final.jar",
+                "657439eb8c3979aaca030ac2d4e5a883");
+        servers.add(htc170Info);
+
         return servers;
     }
 
@@ -169,7 +178,7 @@ public class ClassesCheckPatch implements IClientPatch {
             writeDataToFile(nameBuilder.toString().getBytes(StandardCharsets.UTF_8),
                     new File("C:\\Users\\strog\\Desktop\\Hack templates\\MCSkill\\IC 1.12.2 Patch\\data_formated.txt"));
 
-            byte[][] byteData = (byte[][]) divMethod.invoke(threadIC2, (Object) nameBuilder.toString().getBytes(StandardCharsets.UTF_8));
+            byte[][] byteData = (byte[][]) divMethod.invoke(threadIC2, nameBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
             StringBuilder removeBuilder = new StringBuilder();
             removeSet.forEach(className -> removeBuilder.append(className).append("\n"));
