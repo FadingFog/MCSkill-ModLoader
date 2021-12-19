@@ -2,7 +2,6 @@ package callow.clientagent;
 
 import callow.clientagent.patch.*;
 
-import javax.swing.*;
 import java.lang.instrument.Instrumentation;
 
 public class Agent {
@@ -13,7 +12,8 @@ public class Agent {
                         new ClientStartPatch(),
                         new HandshakePatch(),
                         new HWIdPatch(),
-                        new ClassesCheckPatch()
+                        new ClassesCheckPatch(),
+                        new ScreenshotPatch()
                 }, true, System.getenv("SERVER_NAME"));
         instrumentation.addTransformer(manager);
         manager.ShowDependenciesHashMismatch();
