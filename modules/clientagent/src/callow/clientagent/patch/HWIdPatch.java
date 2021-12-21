@@ -25,7 +25,8 @@ public class HWIdPatch implements IClientPatch {
     public List<String> getListPatchedClasses() {
         List<String> classes = new ArrayList<>();
         classes.add("com.luffy.mixedmod.client.utils.HWDetails");
-        classes.add("com.luffy.mixedmod.common.utils.HWSerializer");
+
+        // classes.add("ru.sky_drive.dw.lllIIIllIIIlllllIIlIIIIIllIlIIlIIlIlIIllIIIlIlIIIllIIIllIlIIIIIlIIlIIlIIllIlIIllIlIllIlllIlIlllIllIIIlIIlIlIllIlIIIlIllllllllIlIIIIlIIlllIIlllllIIlIIllllllllIIIllIlIlIIllIIIIlIIllllIIllllIIllIIllIlIIIIIlIllIIll.HwidUtils");
         return classes;
     }
 
@@ -34,9 +35,14 @@ public class HWIdPatch implements IClientPatch {
         List<ServerInfo> servers = new ArrayList<>();
 
         ServerInfo htc112 = new ServerInfo("HiTech 1.12.2", new HashMap<>());
-        htc112.hashDependencies.put("mods/MixedMod-1.0.8-client.jar",
-                "c92d841bf16af56c78bd23f43e695781");
+        htc112.hashDependencies.put("mods/MixedMod-1.0.9-client.jar",
+                "8ea38b671ea9704d8459517706b706e7");
         servers.add(htc112);
+
+//        ServerInfo htc1710 = new ServerInfo("HiTechCraft", new HashMap<>());
+//        htc1710.hashDependencies.put("mods/DwCity-2.11-client-final.jar",
+//                "d0b7a199361cf2eaa4fc0c26c4d08273");
+//        servers.add(htc1710);
 
         return servers;
     }
@@ -48,46 +54,48 @@ public class HWIdPatch implements IClientPatch {
 
     @Override
     public boolean patch(ClassPool pool, CtClass ctClass) {
-        if (ctClass.getName().equals("com.luffy.mixedmod.common.utils.HWSerializer"))
-        {
-            try {
-                CtMethod method = ctClass.getDeclaredMethod("serialize");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.onSerializeOut($_);");
+        try {
+            CtMethod method = ctClass.getDeclaredMethod("getCPU");
+            method.setBody("{return \"getCPU error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
 
-            } catch (NotFoundException | CannotCompileException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        else {
-            try {
-                CtMethod method = ctClass.getDeclaredMethod("getMac");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
-                method = ctClass.getDeclaredMethod("getBaseboard");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
-                method = ctClass.getDeclaredMethod("isVM");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
-                method = ctClass.getDeclaredMethod("getHDD");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
-                method = ctClass.getDeclaredMethod("getGPU");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
-                method = ctClass.getDeclaredMethod("getDiscord");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
-                method = ctClass.getDeclaredMethod("getCPU");
-                method.setBody("{return \"Intel(R) Core(TM) i5-2500K CPU @ 3.30GHz | BFEBFBFF000206A7\";}");
-                method = ctClass.getDeclaredMethod("getIP");
-                method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
-            } catch (NotFoundException | CannotCompileException e) {
-                e.printStackTrace();
-                return false;
-            }
+            method = ctClass.getDeclaredMethod("getGPU");
+            method.setBody("{return \"getGPU error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+
+            method = ctClass.getDeclaredMethod("getHDD");
+            method.setBody("{return \"getHDD error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+
+            method = ctClass.getDeclaredMethod("getBaseboard");
+            method.setBody("{return \"getBaseboard error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+
+            method = ctClass.getDeclaredMethod("getOS");
+            method.setBody("{return \"getOS error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+
+            method = ctClass.getDeclaredMethod("getMac");
+            method.setBody("{return \"getMac error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.randomReplace($_, true);");
+
+            method = ctClass.getDeclaredMethod("getIP");
+            method.setBody("{return \"getIP error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+
+            method = ctClass.getDeclaredMethod("isVM");
+            method.setBody("{return \"isVM error\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+
+            method = ctClass.getDeclaredMethod("getDiscord");
+            method.setBody("{return \"\";}");
+            //method.insertAfter("return callow.clientagent.patch.HWIdPatch.replaceDigits($_);");
+
+        } catch (NotFoundException | CannotCompileException e) {
+            e.printStackTrace();
+            return false;
         }
         return true;
-    }
-
-    public static byte[] onSerializeOut(byte[] result) {
-        System.out.println(Arrays.toString(result));
-        return result;
     }
 
     public static String randomReplace(String string, boolean isHex) {
